@@ -1951,8 +1951,9 @@
                 });
             });
 
-            const customTitle = document.getElementById('customMockTitle').value.trim() || `Custom Mock (${fileName})`;
-            const timingRule = document.getElementById('customTimingRule').value;
+            const customTitle = document.getElementById('customMockTitle')?.value.trim() || `Custom Mock (${fileName})`;
+            const timingRule = document.getElementById('customTimingRule')?.value || 'strict';
+
 
             const sections = Object.keys(secMap).map((name, sIdx) => {
                 const defaultDuration = (name.toLowerCase().includes('reasoning')) ? 25 : (name.toLowerCase().includes('quant') || name.toLowerCase().includes('numerical')) ? 20 : 25;
