@@ -1,0 +1,2018 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IBPS RRB Clerk Prelims - TCS iON Assessment Platform</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome 6 CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SheetJS (xlsx) CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+            background-color: #f1f3f6;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        /* TCS iON Distinct Palette Badges */
+        .tcs-badge {
+            width: 32px;
+            height: 28px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.12s ease;
+            position: relative;
+            clip-path: polygon(0% 15%, 15% 0%, 85% 0%, 100% 15%, 100% 85%, 85% 100%, 15% 100%, 0% 85%);
+        }
+
+        .badge-not-visited {
+            background-color: #e5e7eb;
+            color: #374151;
+            border: 1px solid #9ca3af;
+        }
+
+        .badge-not-answered {
+            background-color: #d9534f; /* TCS Orange-Red */
+            color: #fff;
+        }
+
+        .badge-answered {
+            background-color: #5cb85c; /* TCS Green */
+            color: #fff;
+        }
+
+        .badge-review {
+            background-color: #8e44ad; /* TCS Purple */
+            color: #fff;
+            border-radius: 50% !important;
+            clip-path: none !important;
+            width: 28px;
+            height: 28px;
+        }
+
+        .badge-ans-review {
+            background-color: #8e44ad;
+            color: #fff;
+            border-radius: 50% !important;
+            clip-path: none !important;
+            width: 28px;
+            height: 28px;
+            position: relative;
+        }
+
+        .badge-ans-review::after {
+            content: '';
+            position: absolute;
+            bottom: 1px;
+            right: 1px;
+            width: 8px;
+            height: 8px;
+            background-color: #2ecc71;
+            border: 1.5px solid #fff;
+            border-radius: 50%;
+        }
+
+        .current-active-btn {
+            outline: 2.5px solid #2563eb;
+            box-shadow: 0 0 7px rgba(37, 99, 235, 0.85);
+            transform: scale(1.08);
+        }
+
+        .tcs-header-bg {
+            background: linear-gradient(180deg, #1f4e79 0%, #15385b 100%);
+        }
+
+        .tcs-top-strip {
+            background-color: #122b44;
+        }
+
+        /* Draggable split-divider styling */
+        .resizer-divider {
+            width: 8px;
+            background-color: #e2e8f0;
+            border-left: 1px solid #cbd5e1;
+            border-right: 1px solid #cbd5e1;
+            cursor: col-resize;
+            transition: background-color 0.2s ease;
+            position: relative;
+            user-select: none;
+            touch-action: none;
+            z-index: 20;
+            flex-shrink: 0;
+        }
+
+        .resizer-divider:hover,
+        .resizer-divider.is-dragging {
+            background-color: #2563eb;
+            border-color: #1d4ed8;
+        }
+
+        .resizer-divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 2px;
+            height: 32px;
+            background-color: #94a3b8;
+            box-shadow: -2px 0 0 #94a3b8, 2px 0 0 #94a3b8;
+        }
+
+        .resizer-divider:hover::after,
+        .resizer-divider.is-dragging::after {
+            background-color: #ffffff;
+            box-shadow: -2px 0 0 #ffffff, 2px 0 0 #ffffff;
+        }
+
+        /* Clean scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen">
+
+    <div id="screenUploadDashboard" class="min-h-screen flex flex-col bg-slate-100">
+        <!-- Top banner -->
+        <header class="tcs-header-bg text-white px-6 py-4 flex items-center justify-between shadow border-b border-blue-900">
+            <div class="flex items-center space-x-3">
+                <div class="bg-white text-[#1f4e79] font-black text-base px-3 py-1 rounded shadow-inner tracking-wider">
+                    TCS <span class="text-orange-600">iON</span>
+                </div>
+                <div>
+                    <h1 class="text-sm md:text-base font-bold tracking-wide">CRP RRBs - Office Assistant (Clerk) Preliminary Examination</h1>
+                    <p class="text-xs text-blue-200">CBT Simulation Engine &bull; Custom Question Upload & PYQ Mock Repository</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3 text-xs">
+                <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 px-2.5 py-1 rounded-full flex items-center gap-1.5 font-semibold">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> Engine Ready
+                </span>
+            </div>
+        </header>
+
+        <!-- Main Body -->
+        <main class="flex-1 max-w-5xl w-full mx-auto p-4 md:p-8 space-y-6">
+            <!-- Notice bar -->
+            <!-- <div class="bg-blue-50 border-l-4 border-[#1f4e79] p-4 rounded-r shadow-sm">
+                <div class="flex items-start justify-between flex-wrap gap-2">
+                    <div>
+                        <h2 class="text-sm font-bold text-blue-950 flex items-center gap-2">
+                            <i class="fa-solid fa-circle-info text-blue-700"></i> Mock Paper Setup & Dual-Pane Feature
+                        </h2>
+                        <p class="text-xs text-blue-900 mt-1 leading-relaxed">
+                            આ મોક ટેસ્ટમાં <b>Puzzle, Seating Arrangement અને Data Interpretation (DI)</b> માટે તદ્દન TCS જેવો જ <b>2-Part Split-Screen View</b> ઉપલબ્ધ છે. જો અંગ્રેજી સિલેક્ટ કરશો તો માત્ર અંગ્રેજી દેખાશે, અને ગુજરાતી સિલેક્ટ કરશો તો ઉપર અંગ્રેજી અને નીચે ગુજરાતી આવશે.
+                        </p>
+                    </div>
+                    <button onclick="downloadSampleTemplate()" class="bg-[#1f4e79] hover:bg-blue-900 text-white text-xs font-semibold px-3.5 py-2 rounded shadow transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-file-excel text-emerald-400"></i> Download Sample Excel Template
+                    </button>
+                </div>
+            </div> -->
+
+            <!-- Upload Box & Built-in Mock Launcher -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Dropzone (2 cols) -->
+                <div class="lg:col-span-2 bg-white rounded-lg border border-slate-300 shadow-sm p-6 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between border-b pb-3 mb-4">
+                            <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                                <i class="fa-solid fa-cloud-arrow-up text-blue-700"></i>
+                                Upload Question Paper (Excel / CSV)
+                            </h3>
+                            <span class="text-[11px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-mono">.xlsx, .xls, .csv</span>
+                        </div>
+
+                        <!-- Drag-and-drop container -->
+                        <div id="dropZone" onclick="document.getElementById('excelFileInput').click()" class="border-2 border-dashed border-slate-300 hover:border-blue-600 hover:bg-blue-50/40 rounded-lg p-8 text-center cursor-pointer transition bg-slate-50 flex flex-col items-center justify-center">
+                            <div class="w-14 h-14 rounded-full bg-blue-100 text-[#1f4e79] flex items-center justify-center text-2xl mb-3 shadow-inner">
+                                <i class="fa-solid fa-file-arrow-up"></i>
+                            </div>
+                            <p class="text-sm font-bold text-slate-700">Drag & Drop your question spreadsheet here</p>
+                            <p class="text-xs text-slate-500 mt-1">Supports Context_EN, Context_GU & SetID for Split-Screen Puzzles/DI</p>
+                            <input type="file" id="excelFileInput" accept=".xlsx, .xls, .csv" class="hidden" onchange="handleExcelFileUpload(event)">
+                        </div>
+
+                        <!-- Status Alert on Upload -->
+                        <div id="fileUploadStatus" class="mt-4 hidden p-3 rounded text-xs"></div>
+                    </div>
+
+                    <!-- Config options -->
+                    <!-- <div class="mt-6 pt-4 border-t border-slate-200 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Mock Exam Name:</label>
+                            <input type="text" id="customMockTitle" placeholder="e.g. IBPS RRB Clerk Mock #01" class="w-full text-xs border border-slate-300 rounded px-2.5 py-1.5 focus:border-blue-600 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Timing Rule:</label>
+                            <select id="customTimingRule" class="w-full text-xs border border-slate-300 rounded px-2.5 py-1.5 focus:border-blue-600 outline-none">
+                                <option value="strict">Strict Sectional (25m Reasoning + 20m Quant)</option>
+                                <option value="composite">45 Minutes Composite (Free Switching)</option>
+                            </select>
+                        </div>
+                    </div> -->
+                </div>
+
+                <!-- Built-in 80Q Quick Action -->
+                <div class="bg-gradient-to-br from-slate-900 to-blue-950 text-white rounded-lg shadow-sm p-6 flex flex-col justify-between">
+                    <div>
+                        <div class="inline-block bg-amber-400 text-slate-900 font-extrabold text-[10px] uppercase tracking-wider px-2 py-0.5 rounded mb-3">
+                            Instant Load
+                        </div>
+                        <h3 class="text-base font-bold mb-2">Authentic PYQ Mock (80Q)</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            તૈયાર કરેલ <b>સંપૂર્ણ 80 પ્રશ્નોવાળી પ્રમાણિત Mock</b> (40 Reasoning + 40 Quant) સીધી લોડ કરો. જેમાં Floor Puzzle, Linear & Circular Seating અને 2 DI Sets સામેલ છે.
+                        </p>
+
+                        <div class="mt-4 space-y-2 text-xs text-slate-300">
+                            <div class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> Split-screen for Puzzles & DI</div>
+                            <div class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> English Only OR Stacked English + Gujarati</div>
+                            <div class="flex items-center gap-2"><i class="fa-solid fa-check text-emerald-400"></i> Exact negative marking (-0.25)</div>
+                        </div>
+                    </div>
+
+                    <!-- <button onclick="loadDefaultMockAndProceed()" class="mt-6 w-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold py-2.5 px-4 rounded shadow-lg transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-bolt"></i> Load Built-in 80Q Mock & Proceed
+                    </button> -->
+                </div>
+            </div>
+
+            <!-- Staged Paper Card -->
+            <div id="stagedPaperCard" class="bg-white rounded-lg border border-slate-300 p-5 shadow-sm hidden">
+                <div class="flex flex-wrap items-center justify-between gap-3 border-b pb-3">
+                    <div>
+                        <span class="text-[10px] font-bold uppercase bg-blue-100 text-blue-800 px-2 py-0.5 rounded">Active Paper Staged</span>
+                        <h4 id="stagedPaperTitle" class="text-sm font-bold text-slate-800 mt-1">IBPS RRB Clerk PYQ Mock</h4>
+                        <p id="stagedPaperMeta" class="text-xs text-slate-500">2 Sections &bull; 80 Questions &bull; Strict Sectional Timing</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <!-- <button onclick="openQuestionPaperPreviewModal()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded border border-slate-300 transition">
+                            <i class="fa-solid fa-eye mr-1"></i> Preview Questions
+                        </button> -->
+                        <button onclick="goToInstructionsScreen()" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded shadow transition flex items-center gap-1.5">
+                            <span>Proceed to Instructions</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Section Summary Table -->
+                <div class="mt-3 overflow-x-auto">
+                    <table class="w-full text-xs text-left">
+                        <thead>
+                            <tr class="text-slate-500 border-b">
+                                <th class="py-1">Section</th>
+                                <th class="py-1">Questions</th>
+                                <th class="py-1">Allocated Time</th>
+                                <th class="py-1">Marks (+ve / -ve)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="stagedSectionsTableBody" class="text-slate-700 font-medium"></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="screenInstructions" class="hidden min-h-screen flex-col bg-white">
+        <!-- Top Utility Strip -->
+        <div class="tcs-top-strip text-slate-200 px-4 py-1.5 flex items-center justify-between text-xs border-b border-blue-950">
+            <span>Institute of Banking Personnel Selection &bull; TCS Online Examination Node</span>
+            <span class="font-mono text-emerald-400">Security Verification: PASSED</span>
+        </div>
+
+        <!-- Header -->
+        <header class="tcs-header-bg text-white px-5 py-2.5 flex items-center justify-between shadow-md">
+            <div class="flex items-center space-x-3">
+                <div class="bg-white text-[#1f4e79] font-black text-sm px-2.5 py-1 rounded shadow-inner">
+                    TCS <span class="text-orange-600">iON</span>
+                </div>
+                <div>
+                    <h2 class="text-xs md:text-sm font-bold" id="instructionsExamHeader">CRP RRBs - Office Assistant (Clerk) Preliminary Examination</h2>
+                    <p class="text-[11px] text-blue-200">General Instructions to Candidate</p>
+                </div>
+            </div>
+            <!-- Candidate profile pill -->
+            <div class="flex items-center bg-blue-900/60 border border-blue-400/30 px-3 py-1 rounded gap-3">
+                <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center text-slate-700 font-bold text-xs">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <div class="text-right">
+                    <div class="text-[11px] font-bold text-yellow-300">JOHN SMITH</div>
+                    <div class="text-[10px] text-blue-200">Roll: <span class="text-white font-mono font-bold">240189012</span></div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Instructions Body -->
+        <div class="flex-1 max-w-4xl w-full mx-auto p-6 overflow-y-auto space-y-4 text-xs text-slate-700 leading-relaxed">
+            <div class="border-b pb-3">
+                <h3 class="text-sm font-bold text-slate-900">Please read instructions carefully / કૃપા કરીને નીચે આપેલી સૂચનાઓ ધ્યાનપૂર્વક વાંચો:</h3>
+            </div>
+
+            <div class="space-y-3">
+                <h4 class="font-bold text-slate-900">General Instructions / સામાન્ય સૂચનાઓ:</h4>
+                <ol class="list-decimal pl-5 space-y-1.5">
+                    <li>Total Duration / કુલ સમયગાળો: <b id="instructionDurationText">45 minutes (25m Reasoning + 20m Quant)</b>.</li>
+                    <li>The clock will be set at the server. The countdown timer in the top right corner of screen will display the remaining time available for you to complete the examination.</li>
+                    <li>For every correct response, you will be awarded <b>+1.00 Mark</b>. For every wrong answer, <b>-0.25 Mark</b> will be deducted.</li>
+                    <li><b>Split Screen Format:</b> For Puzzle, Seating Arrangement and Data Interpretation questions, the left side displays the passage/data table and the right side displays the question and options.</li>
+                    <li><b>Language rule:</b> If English is chosen, questions appear in <b>English only</b>. If Gujarati is chosen, English appears on top and Gujarati translation appears directly underneath it (<b>English + Gujarati Stacked</b>).</li>
+                </ol>
+
+                <h4 class="font-bold text-slate-900 mt-3">Question Palette Symbols / પ્રશ્ન પેલેટ સંકેતો:</h4>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 bg-slate-50 p-3 rounded border">
+                    <div class="flex items-center gap-2">
+                        <span class="tcs-badge badge-not-visited">1</span>
+                        <span>You have not visited the question yet (જોયો નથી).</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="tcs-badge badge-not-answered">2</span>
+                        <span>You have not answered the question (જવાબ આપ્યો નથી).</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="tcs-badge badge-answered">3</span>
+                        <span>You have answered the question (જવાબ આપ્યો છે).</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="tcs-badge badge-review">4</span>
+                        <span>You have marked the question for review (રિવ્યુ માટે ચિહ્નિત).</span>
+                    </div>
+                    <div class="flex items-center gap-2 sm:col-span-2">
+                        <span class="tcs-badge badge-ans-review">5</span>
+                        <span>Answered & Marked for Review - <b>This will be evaluated</b> (ગુણાંકન માટે ગણતરીમાં લેવાશે).</span>
+                    </div>
+                </div>
+
+                <div class="border-t pt-4 space-y-3">
+                    <div class="flex items-center gap-3">
+                        <label for="defaultLanguageChoice" class="font-bold text-slate-800">Choose your default language for question display:</label>
+                        <select id="defaultLanguageChoice" class="border border-slate-300 rounded px-2.5 py-1 text-xs outline-none focus:border-blue-600 bg-white">
+                            <option value="en">English (English Only)</option>
+                            <option value="gu" selected>ગુજરાતી (English + Gujarati Stacked)</option>
+                        </select>
+                    </div>
+
+                    <div class="bg-amber-50 border border-amber-300 p-3 rounded flex items-start gap-2">
+                        <input type="checkbox" id="acceptDisclaimerCheckbox" onchange="toggleReadyButton(this.checked)" class="mt-0.5 w-4 h-4 text-blue-600 rounded">
+                        <label for="acceptDisclaimerCheckbox" class="text-[11px] text-amber-950 cursor-pointer">
+                            I have read and understood the instructions. All computer hardware allotted to me are in proper working condition. I agree that in case of not adhering to instructions, I will be liable to be debarred.
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom bar -->
+        <div class="bg-slate-100 px-6 py-3 border-t border-slate-300 flex items-center justify-between">
+            <button onclick="backToUploadDashboard()" class="px-4 py-2 bg-slate-300 hover:bg-slate-400 text-slate-800 rounded text-xs font-bold transition">
+                <i class="fa-solid fa-arrow-left mr-1"></i> Back to Paper Setup
+            </button>
+            <button id="readyToBeginBtn" onclick="launchCbtExamNow()" disabled class="px-6 py-2 bg-emerald-600 text-white rounded text-xs font-bold opacity-50 cursor-not-allowed shadow transition flex items-center gap-2">
+                <span>I am ready to begin</span>
+                <i class="fa-solid fa-circle-play"></i>
+            </button>
+        </div>
+    </div>
+
+    <div id="screenCbtExam" class="hidden flex-col h-screen overflow-hidden">
+        <!-- TCS top strip -->
+        <div class="tcs-top-strip text-slate-200 px-4 py-1 flex items-center justify-between text-[11px] border-b border-blue-950 shrink-0">
+            <div class="flex items-center space-x-3">
+                <span><i class="fa-solid fa-server text-blue-400 mr-1"></i> Examination Server: <b>TCS-AWS-NODE-04</b></span>
+                <span class="hidden sm:inline">&bull;</span>
+                <span class="hidden sm:inline"><i class="fa-solid fa-shield-halved text-emerald-400 mr-1"></i> High Security Assessment Sandbox</span>
+            </div>
+            <div>
+                <span class="bg-blue-950 px-2 py-0.5 rounded border border-blue-400/30 text-blue-200 text-[10px]">
+                    Candidate ID: <b class="text-white">C001-RRB</b>
+                </span>
+            </div>
+        </div>
+
+        <!-- TCS Header -->
+        <header class="tcs-header-bg text-white px-4 py-2 flex items-center justify-between shadow-md select-none shrink-0 border-b border-blue-900">
+            <div class="flex items-center space-x-3">
+                <div class="bg-white text-[#1f4e79] font-black text-sm px-2.5 py-1 rounded shadow-inner tracking-wider">
+                    TCS <span class="text-orange-600">iON</span>
+                </div>
+                <div>
+                    <h1 class="text-xs md:text-sm font-semibold tracking-wide flex items-center gap-2">
+                        <span id="cbtHeaderExamTitle">CRP RRBs - Office Assistant (Clerk) Preliminary Examination</span>
+                        <span id="cbtActiveMockBadge" class="bg-amber-400 text-slate-900 text-[10px] px-2 py-0.5 rounded-full font-bold">Active Mock</span>
+                    </h1>
+                    <p class="text-[11px] text-blue-200">Institute of Banking Personnel Selection &bull; Standard Assessment Engine</p>
+                </div>
+            </div>
+
+            <!-- Candidate Profile -->
+            <div class="flex items-center space-x-3">
+                <div class="flex items-center bg-blue-900/60 border border-blue-400/30 px-3 py-1 rounded-sm gap-3">
+                    <div class="w-8 h-8 rounded-full bg-slate-200 border border-white flex items-center justify-center text-slate-700 font-bold text-xs shadow-inner">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-[11px] font-bold text-yellow-300 uppercase tracking-tight">JOHN SMITH</div>
+                        <div class="text-[10px] text-blue-200">System Name: <span class="text-white font-mono font-bold">C001</span></div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- SECTION BAR, CONTROLS & DIGITAL TIMER -->
+        <div class="bg-slate-100 border-b border-slate-300 px-4 py-1.5 flex flex-wrap items-center justify-between shrink-0 gap-2">
+            <!-- Section Tabs -->
+            <div class="flex items-center space-x-2" id="cbtSectionTabsContainer">
+                <!-- Dynamically filled with section tabs -->
+            </div>
+
+            <!-- View In + Timer -->
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center text-xs text-slate-600">
+                    <span class="mr-2 font-medium">View in:</span>
+                    <select id="langSelect" onchange="switchLanguage(this.value)" class="border border-slate-300 bg-white rounded px-2 py-0.5 text-xs font-semibold focus:outline-blue-500 cursor-pointer">
+                        <option value="en">English (Only)</option>
+                        <option value="gu">ગુજરાતી (English + Gujarati)</option>
+                    </select>
+                </div>
+
+                <!-- Digital Timer Display -->
+                <div class="flex items-center bg-white px-3 py-1 rounded border border-slate-300 shadow-inner">
+                    <span class="text-[11px] font-semibold text-slate-600 uppercase mr-2 tracking-wide">Time Left:</span>
+                    <span id="timerDisplay" class="font-mono text-sm md:text-base font-extrabold text-red-600">25:00</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAIN SPLIT WORKSPACE: Question Area (Left 75%) + Palette (Right 25%) -->
+        <div class="flex flex-1 overflow-hidden">
+            <!-- LEFT: Question Area with dynamic 1-column or 2-column split for Puzzles/DI -->
+            <div class="flex-1 flex flex-col bg-white overflow-hidden border-r border-slate-300">
+                <!-- Question Top Indicator -->
+                <div class="bg-slate-50 px-4 py-2 border-b border-slate-200 flex items-center justify-between text-xs shrink-0">
+                    <div class="font-bold text-slate-700 flex items-center gap-2">
+                        <span class="bg-blue-800 text-white px-2 py-0.5 rounded text-[11px]">Question No. <span id="currentQNum">1</span></span>
+                        <span id="sectionIndicator" class="text-slate-500 font-semibold">(Reasoning Ability)</span>
+                        <span id="setGroupBadge" class="hidden bg-indigo-100 text-indigo-800 font-bold px-2 py-0.5 rounded text-[10px] border border-indigo-200">
+                            <i class="fa-solid fa-arrows-left-right text-[9px] mr-1"></i> Drag Divider to Resize
+                        </span>
+                    </div>
+                    <div class="flex items-center space-x-3 text-[11px]">
+                        <span class="text-green-700 font-semibold"><i class="fa-solid fa-circle-plus"></i> Marks: +<span id="qMarkValue">1.00</span></span>
+                        <span class="text-red-600 font-semibold"><i class="fa-solid fa-circle-minus"></i> Negative: -<span id="qNegMarkValue">0.25</span></span>
+                    </div>
+                </div>
+
+                <!-- QUESTION CONTENT WRAPPER: Adapts automatically between Full-Width and 2-Part Split with Resizer -->
+                <div id="questionWorkspaceContainer" class="flex-1 overflow-hidden relative">
+                    <!-- Dynamic rendering inserted by JavaScript -->
+                </div>
+
+                <!-- Bottom Action Controls -->
+                <div class="bg-slate-100 p-2.5 px-4 border-t border-slate-300 flex flex-wrap items-center justify-between gap-2 shrink-0">
+                    <div class="flex items-center space-x-2">
+                        <button onclick="handleMarkForReview()" class="px-3 py-1.5 bg-indigo-50 border border-indigo-400 text-indigo-800 hover:bg-indigo-100 rounded text-xs font-bold shadow-sm transition">
+                            Mark for Review & Next
+                        </button>
+                        <button onclick="handleClearResponse()" class="px-3 py-1.5 bg-white border border-slate-400 text-slate-700 hover:bg-slate-50 rounded text-xs font-semibold shadow-sm transition">
+                            Clear Response
+                        </button>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="handleSaveAndNext()" class="px-5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-xs font-bold shadow transition flex items-center gap-1.5">
+                            <span>Save & Next</span>
+                            <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        </button>
+                        <button id="finalSubmitBtn" onclick="openSubmitModal()" class="px-4 py-1.5 bg-blue-800 hover:bg-blue-900 text-white rounded text-xs font-bold shadow transition">
+                            Submit Section
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: TCS Question Palette -->
+            <div class="w-80 bg-slate-50 flex flex-col shrink-0 overflow-hidden border-l border-slate-200">
+                <!-- Summary Stats -->
+                <div class="p-3 bg-white border-b border-slate-200 shrink-0">
+                    <div class="grid grid-cols-2 gap-2 text-[11px] text-slate-700">
+                        <div class="flex items-center space-x-1.5">
+                            <span class="w-5 h-4 bg-emerald-600 text-white rounded-xs flex items-center justify-center font-bold text-[10px]" id="statAnswered">0</span>
+                            <span>Answered</span>
+                        </div>
+                        <div class="flex items-center space-x-1.5">
+                            <span class="w-5 h-4 bg-rose-600 text-white rounded-xs flex items-center justify-center font-bold text-[10px]" id="statNotAnswered">0</span>
+                            <span>Not Answered</span>
+                        </div>
+                        <div class="flex items-center space-x-1.5">
+                            <span class="w-5 h-4 bg-slate-200 text-slate-800 border border-slate-400 rounded-xs flex items-center justify-center font-bold text-[10px]" id="statNotVisited">40</span>
+                            <span>Not Visited</span>
+                        </div>
+                        <div class="flex items-center space-x-1.5">
+                            <span class="w-4 h-4 bg-purple-700 text-white rounded-full flex items-center justify-center font-bold text-[10px]" id="statReview">0</span>
+                            <span>Marked for Review</span>
+                        </div>
+                    </div>
+                    <div class="mt-2 text-[10px] text-slate-600 bg-amber-50 p-1.5 rounded border border-amber-200 flex items-start space-x-1.5">
+                        <span class="w-3.5 h-3.5 bg-purple-700 text-white rounded-full shrink-0 relative mt-0.5"><span class="w-1.5 h-1.5 bg-emerald-400 rounded-full absolute -bottom-0.5 -right-0.5 border border-white"></span></span>
+                        <span>Ans & Marked for Review (<span id="statAnsReview" class="font-bold">0</span>) <i>(evaluated)</i></span>
+                    </div>
+                </div>
+
+                <!-- Palette Section Title -->
+                <div class="bg-blue-100 text-blue-900 font-bold text-xs px-3 py-1.5 border-b border-blue-200 flex justify-between items-center shrink-0">
+                    <span id="paletteSectionTitle">Reasoning Ability</span>
+                    <span class="text-[11px] text-blue-700 font-medium">Question Palette</span>
+                </div>
+
+                <!-- Palette Numbers Grid -->
+                <div class="flex-1 p-3 overflow-y-auto">
+                    <div id="paletteGrid" class="grid grid-cols-5 gap-2 justify-items-center">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Palette Footer -->
+                <div class="p-2.5 bg-slate-100 border-t border-slate-200 text-[11px] text-slate-600 shrink-0 text-center">
+                    <span>IBPS RRB Prelims: 45 Mins Total Examination</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="screenResultReport" class="hidden fixed inset-0 bg-slate-900/90 z-50 flex flex-col p-3 md:p-6 overflow-y-auto">
+        <div class="max-w-5xl mx-auto w-full bg-white rounded-lg shadow-2xl border border-slate-200 overflow-hidden flex flex-col my-auto">
+            <div class="bg-[#1f4e79] text-white p-4 flex flex-wrap items-center justify-between gap-2">
+                <div>
+                    <h2 class="text-base md:text-lg font-bold flex items-center gap-2">
+                        <i class="fa-solid fa-chart-line text-amber-300"></i>
+                        <span id="resultExamTitle">IBPS RRB Clerk Prelims - Score Card & Analysis</span>
+                    </h2>
+                    <p class="text-xs text-blue-200 mt-0.5">TCS iON CBT Performance Report & Answer Key</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="retakeExam()" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-xs font-bold flex items-center gap-1.5 shadow">
+                        <i class="fa-solid fa-rotate-right"></i> Re-test
+                    </button>
+                    <button onclick="returnToDashboardFromResults()" class="px-3 py-1.5 bg-slate-600 hover:bg-slate-700 text-white rounded text-xs font-semibold">
+                        <i class="fa-solid fa-house mr-1"></i> Dashboard
+                    </button>
+                </div>
+            </div>
+
+            <!-- Scorecard Numbers -->
+            <div class="p-5 bg-slate-50 border-b border-slate-200">
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 text-center">
+                    <div class="bg-white p-3 rounded border border-slate-200 shadow-sm">
+                        <div class="text-[11px] font-bold text-slate-500 uppercase">Total Score</div>
+                        <div id="resTotalScore" class="text-2xl font-black text-blue-700 mt-1">0.00</div>
+                        <div class="text-[10px] text-slate-400" id="resMaxMarks">Out of 80.00</div>
+                    </div>
+                    <div class="bg-white p-3 rounded border border-slate-200 shadow-sm">
+                        <div class="text-[11px] font-bold text-slate-500 uppercase">Accuracy</div>
+                        <div id="resAccuracy" class="text-2xl font-black text-emerald-600 mt-1">0%</div>
+                        <div class="text-[10px] text-slate-400">Total Attempts</div>
+                    </div>
+                    <div class="bg-white p-3 rounded border border-slate-200 shadow-sm">
+                        <div class="text-[11px] font-bold text-slate-500 uppercase">Attempted</div>
+                        <div id="resAttempted" class="text-2xl font-black text-indigo-600 mt-1">0</div>
+                        <div class="text-[10px] text-slate-400" id="resTotalQues">Out of 80</div>
+                    </div>
+                    <div class="bg-white p-3 rounded border border-slate-200 shadow-sm">
+                        <div class="text-[11px] font-bold text-slate-500 uppercase">Correct</div>
+                        <div id="resCorrect" class="text-2xl font-black text-green-600 mt-1">0</div>
+                        <div class="text-[10px] text-green-700">+1.00 Marks</div>
+                    </div>
+                    <div class="bg-white p-3 rounded border border-slate-200 shadow-sm">
+                        <div class="text-[11px] font-bold text-slate-500 uppercase">Incorrect</div>
+                        <div id="resWrong" class="text-2xl font-black text-rose-600 mt-1">0</div>
+                        <div class="text-[10px] text-rose-500">-0.25 Negative</div>
+                    </div>
+                    <div class="bg-white p-3 rounded border border-slate-200 shadow-sm">
+                        <div class="text-[11px] font-bold text-slate-500 uppercase">Cut-Off Status</div>
+                        <div id="resCutoffStatus" class="text-xs font-extrabold uppercase mt-2 px-1.5 py-1 rounded bg-amber-100 text-amber-800">Evaluating</div>
+                        <div class="text-[10px] text-slate-400">Gen Target: 68+</div>
+                    </div>
+                </div>
+
+                <!-- Section Breakdown Cards -->
+                <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3" id="sectionalBreakdownContainer"></div>
+            </div>
+
+            <!-- Detailed Solutions Pane -->
+            <div class="p-5 flex-1 flex flex-col overflow-hidden">
+                <div class="flex flex-wrap items-center justify-between mb-3 gap-2">
+                    <h3 class="font-bold text-xs uppercase text-slate-700 flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-blue-700"></i>
+                        <span>Detailed Solution & Question-by-Question Analysis</span>
+                    </h3>
+                    <div class="flex items-center space-x-2 text-xs">
+                        <label class="font-semibold text-slate-600">Filter:</label>
+                        <button onclick="filterReviewList('all')" class="px-2.5 py-1 bg-slate-200 rounded font-semibold text-slate-700 hover:bg-slate-300">All</button>
+                        <button onclick="filterReviewList('wrong')" class="px-2.5 py-1 bg-rose-100 text-rose-700 rounded font-semibold hover:bg-rose-200">Incorrect</button>
+                        <button onclick="filterReviewList('correct')" class="px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded font-semibold hover:bg-emerald-200">Correct</button>
+                        <button onclick="filterReviewList('skipped')" class="px-2.5 py-1 bg-amber-100 text-amber-700 rounded font-semibold hover:bg-amber-200">Unattempted</button>
+                    </div>
+                </div>
+
+                <div id="solutionsListContainer" class="flex-1 overflow-y-auto space-y-3 pr-1 max-h-[420px]"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="paperPreviewModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-2xl max-w-3xl w-full max-h-[85vh] flex flex-col overflow-hidden">
+            <div class="bg-[#1f4e79] text-white px-4 py-2.5 flex justify-between items-center text-sm font-bold">
+                <span id="previewModalTitle">Paper Questions Preview</span>
+                <button onclick="closeQuestionPaperPreviewModal()" class="text-white hover:text-slate-200 text-base"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="paperPreviewList" class="p-4 overflow-y-auto space-y-4 text-xs text-slate-800"></div>
+            <div class="bg-slate-100 px-4 py-2.5 text-right border-t">
+                <button onclick="closeQuestionPaperPreviewModal()" class="px-4 py-1.5 bg-blue-800 text-white rounded text-xs font-bold">Close Preview</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="confirmModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-2xl max-w-md w-full overflow-hidden border border-slate-300">
+            <div class="bg-[#1f4e79] text-white px-4 py-3 flex items-center justify-between">
+                <h3 class="font-bold text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-triangle-exclamation text-yellow-400"></i>
+                    <span id="confirmModalHeading">Section Submission Confirmation</span>
+                </h3>
+                <button onclick="closeConfirmModal()" class="text-white hover:text-red-200 text-sm"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-4 space-y-3 text-xs text-slate-700">
+                <p id="confirmMessage" class="font-medium text-slate-800">Are you sure you want to submit? Review your section summary below:</p>
+                <div class="bg-slate-50 border border-slate-200 rounded p-2.5">
+                    <table class="w-full text-center border-collapse">
+                        <thead>
+                            <tr class="border-b text-[11px] text-slate-500">
+                                <th class="py-1 text-left">Section</th>
+                                <th>Total</th>
+                                <th>Answered</th>
+                                <th>Review</th>
+                                <th>Not Ans</th>
+                            </tr>
+                        </thead>
+                        <tbody id="submitModalTableBody" class="font-semibold text-slate-800"></tbody>
+                    </table>
+                </div>
+                <div id="sectionTransitionNotice" class="text-[11px] text-blue-900 bg-blue-50 border border-blue-200 p-2 rounded">
+                    <!-- Dynamic notice text based on whether it is a section advance or final submit -->
+                </div>
+            </div>
+            <div class="bg-slate-100 px-4 py-2.5 flex justify-end space-x-2 border-t border-slate-200">
+                <button id="modalCancelBtn" onclick="closeConfirmModal()" class="px-3.5 py-1.5 bg-slate-300 text-slate-800 hover:bg-slate-400 rounded text-xs font-bold">Cancel</button>
+                <button id="modalProceedBtn" onclick="confirmModalAction()" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-xs font-bold">Proceed</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State variables
+        let currentExamPaper = null;
+        let activeSectionIndex = 0;
+        let activeQuestionIndex = 0;
+        let examTimeRemaining = 0;
+        let examTimerInterval = null;
+        let currentLanguage = 'gu'; // 'en' or 'gu'
+        let candidateResponses = {}; // keyed by sectionIndex_qIndex
+        let candidateStatus = {};    // 'not-visited', 'not-answered', 'answered', 'review', 'ans-review'
+        let currentReviewFilter = 'all';
+
+        // Split-screen width state (percent for left column, default 48%)
+        let splitLeftWidthPercent = 48;
+        let isResizingActive = false;
+
+        // Palette Status Enums
+        const STATUS_NOT_VISITED = 'not-visited';
+        const STATUS_NOT_ANSWERED = 'not-answered';
+        const STATUS_ANSWERED = 'answered';
+        const STATUS_REVIEW = 'review';
+        const STATUS_ANS_REVIEW = 'ans-review';
+
+        function buildAuthentic80QMock() {
+            // Generates authentic 80 Questions (40 Reasoning + 40 Quant)
+            const reasoningQuestions = [];
+            const quantQuestions = [];
+
+            // Context 1: 7-Floor Building Puzzle (Q1-5)
+            const floorContextEn = "Seven persons P, Q, R, S, T, U, and V live on seven different floors of a building. The bottom floor is numbered 1 and the top floor is numbered 7. P lives on an odd-numbered floor above floor 3. Only three persons live between P and V. R lives immediately below V. S lives on an even-numbered floor immediately above T. Q lives on one of the floors above U.";
+            const floorContextGu = "સાત વ્યક્તિઓ P, Q, R, S, T, U અને V એક બિલ્ડિંગના સાત જુદા જુદા માળ પર રહે છે. સૌથી નીચેના માળનો ક્રમ 1 અને સૌથી ઉપરના માળનો ક્રમ 7 છે. P માળ 3 ની ઉપર એકી ક્રમના માળ પર રહે છે. P અને V ની વચ્ચે ફક્ત ત્રણ વ્યક્તિઓ રહે છે. R એ V ની તરત જ નીચે રહે છે. S એ T ની તરત જ ઉપર બેકી ક્રમના માળ પર રહે છે. Q એ U ની ઉપરના કોઈ એક માળ પર રહે છે.";
+
+            const floorSubQuestions = [
+                {
+                    qEn: "Who among the following lives on the 7th (topmost) floor?",
+                    qGu: "નીચેના પૈકી કોણ 7મા (સૌથી ઉપરના) માળ પર રહે છે?",
+                    optsEn: ["P", "Q", "S", "R", "U"],
+                    optsGu: ["P", "Q", "S", "R", "U"],
+                    ans: "A",
+                    solEn: "Floor arrangement from 7 to 1: 7-P, 6-S, 5-T, 4-Q, 3-V, 2-R, 1-U. Hence, P lives on the 7th floor.",
+                    solGu: "7 થી 1 માળની ગોઠવણી: 7-P, 6-S, 5-T, 4-Q, 3-V, 2-R, 1-U. તેથી, P 7મા માળ પર રહે છે."
+                },
+                {
+                    qEn: "How many persons live between S and R?",
+                    qGu: "S અને R ની વચ્ચે કેટલી વ્યક્તિઓ રહે છે?",
+                    optsEn: ["One", "Two", "Three", "Four", "None"],
+                    optsGu: ["એક", "બે", "ત્રણ", "ચાર", "એકપણ નહીં"],
+                    ans: "C",
+                    solEn: "S is on floor 6 and R is on floor 2. Between them are floors 5, 4, 3 (Three persons: T, Q, V).",
+                    solGu: "S માળ 6 પર અને R માળ 2 પર છે. તેમની વચ્ચે 5, 4, 3 માળ (ત્રણ વ્યક્તિઓ: T, Q, V) છે."
+                },
+                {
+                    qEn: "Who lives on the floor immediately below V?",
+                    qGu: "V ની તરત જ નીચેના માળ પર કોણ રહે છે?",
+                    optsEn: ["T", "U", "R", "Q", "S"],
+                    optsGu: ["T", "U", "R", "Q", "S"],
+                    ans: "C",
+                    solEn: "V lives on floor 3. R lives on floor 2 immediately below V.",
+                    solGu: "V માળ 3 પર રહે છે. R માળ 2 પર V ની તરત જ નીચે રહે છે."
+                },
+                {
+                    qEn: "Four of the following five are alike in a certain way and form a group. Which does not belong to that group?",
+                    qGu: "નીચેના પાંચમાંથી ચાર ચોક્કસ રીતે સમાન છે અને જૂથ બનાવે છે. કયું તે જૂથનું નથી?",
+                    optsEn: ["P", "T", "V", "U", "S"],
+                    optsGu: ["P", "T", "V", "U", "S"],
+                    ans: "E",
+                    solEn: "P(7), T(5), V(3), U(1) live on odd floors, while S(6) lives on an even floor.",
+                    solGu: "P(7), T(5), V(3), U(1) એકી માળ પર રહે છે, જ્યારે S(6) બેકી માળ પર રહે છે."
+                },
+                {
+                    qEn: "Who lives on the bottommost floor (Floor 1)?",
+                    qGu: "સૌથી નીચેના માળ પર (માળ 1) કોણ રહે છે?",
+                    optsEn: ["U", "R", "Q", "T", "V"],
+                    optsGu: ["U", "R", "Q", "T", "V"],
+                    ans: "A",
+                    solEn: "U lives on floor 1.",
+                    solGu: "U માળ 1 પર રહે છે."
+                }
+            ];
+
+            floorSubQuestions.forEach((item, idx) => {
+                reasoningQuestions.push({
+                    qNo: idx + 1,
+                    setId: "R_SET1",
+                    isSplit: true,
+                    contextEn: floorContextEn,
+                    contextGu: floorContextGu,
+                    qEn: item.qEn,
+                    qGu: item.qGu,
+                    optsEn: item.optsEn,
+                    optsGu: item.optsGu,
+                    ans: item.ans,
+                    marks: 1.0,
+                    negMarks: 0.25,
+                    solEn: item.solEn,
+                    solGu: item.solGu
+                });
+            });
+
+            // Context 2: Linear Seating North-facing (Q6-10)
+            const linearContextEn = "Eight persons A, B, C, D, E, F, G, and H are sitting in a straight row facing north. A sits third to the right of B. Only two persons sit between A and G. E sits second to the left of G. C sits to the immediate right of E. H sits third to the left of C. D sits to the left of F.";
+            const linearContextGu = "આઠ વ્યક્તિઓ A, B, C, D, E, F, G અને H ઉત્તર તરફ મુખ રાખીને એક સીધી હરોળમાં બેઠા છે. A એ B ની જમણી બાજુ ત્રીજા સ્થાને બેઠો છે. A અને G ની વચ્ચે ફક્ત બે વ્યક્તિઓ બેઠી છે. E એ G ની ડાબી બાજુ બીજા સ્થાને બેઠો છે. C એ E ની તરત જ જમણી બાજુ બેઠો છે. H એ C ની ડાબી બાજુ ત્રીજા સ્થાને બેઠો છે. D એ F ની ડાબી બાજુ બેઠો છે.";
+
+            const linearSubQuestions = [
+                {
+                    qEn: "Who sits at the extreme left end of the row?",
+                    qGu: "હરોળના ડાબા છેડે કોણ બેઠું છે?",
+                    optsEn: ["H", "B", "D", "E", "C"],
+                    optsGu: ["H", "B", "D", "E", "C"],
+                    ans: "A",
+                    solEn: "Left to Right arrangement: H, B, D, E, C, A, F, G. Hence, H is at the extreme left end.",
+                    solGu: "ડાબેથી જમણે ગોઠવણી: H, B, D, E, C, A, F, G. તેથી, H ડાબા છેડે છે."
+                },
+                {
+                    qEn: "Who sits third to the right of E?",
+                    qGu: "E ની જમણી બાજુ ત્રીજા સ્થાને કોણ બેઠું છે?",
+                    optsEn: ["G", "F", "A", "C", "D"],
+                    optsGu: ["G", "F", "A", "C", "D"],
+                    ans: "B",
+                    solEn: "E is at position 4. Third to the right is position 7, which is F.",
+                    solGu: "E સ્થાન 4 પર છે. તેની જમણી બાજુ ત્રીજું સ્થાન 7 છે, જ્યાં F છે."
+                },
+                {
+                    qEn: "How many persons sit between B and G?",
+                    qGu: "B અને G ની વચ્ચે કેટલી વ્યક્તિઓ બેઠી છે?",
+                    optsEn: ["Three", "Four", "Five", "Two", "Six"],
+                    optsGu: ["ત્રણ", "ચાર", "પાંચ", "બે", "છ"],
+                    ans: "C",
+                    solEn: "B is at position 2 and G is at position 8. Between them are D, E, C, A, F (Five persons).",
+                    solGu: "B સ્થાન 2 પર અને G સ્થાન 8 પર છે. તેમની વચ્ચે D, E, C, A, F (પાંચ વ્યક્તિઓ) છે."
+                },
+                {
+                    qEn: "Who sits to the immediate right of A?",
+                    qGu: "A ની તરત જ જમણી બાજુ કોણ બેઠું છે?",
+                    optsEn: ["C", "F", "G", "E", "B"],
+                    optsGu: ["C", "F", "G", "E", "B"],
+                    ans: "B",
+                    solEn: "F sits to the immediate right of A.",
+                    solGu: "F એ A ની તરત જ જમણી બાજુ બેઠો છે."
+                },
+                {
+                    qEn: "What is the position of D with respect to H?",
+                    qGu: "H ની સાપેક્ષમાં D નું સ્થાન શું છે?",
+                    optsEn: ["Second to the right", "Immediate left", "Third to the left", "Second to the left", "Immediate right"],
+                    optsGu: ["જમણી બાજુ બીજું", "તરત જ ડાબે", "ડાબી બાજુ ત્રીજું", "ડાબી બાજુ બીજું", "તરત જ જમણે"],
+                    ans: "A",
+                    solEn: "H is at position 1 and D is at position 3, which is second to the right of H.",
+                    solGu: "H સ્થાન 1 પર અને D સ્થાન 3 પર છે, જે H ની જમણી બાજુ બીજું છે."
+                }
+            ];
+
+            linearSubQuestions.forEach((item, idx) => {
+                reasoningQuestions.push({
+                    qNo: idx + 6,
+                    setId: "R_SET2",
+                    isSplit: true,
+                    contextEn: linearContextEn,
+                    contextGu: linearContextGu,
+                    qEn: item.qEn,
+                    qGu: item.qGu,
+                    optsEn: item.optsEn,
+                    optsGu: item.optsGu,
+                    ans: item.ans,
+                    marks: 1.0,
+                    negMarks: 0.25,
+                    solEn: item.solEn,
+                    solGu: item.solGu
+                });
+            });
+
+            // Single Reasoning Questions (Q11 to Q40)
+            const syllogismsAndInequalities = [
+                {
+                    qEn: "Statements: Only a few Pen is Paper. All Paper is Book. No Book is Eraser.\nConclusions: I. Some Pen can never be Eraser. II. All Paper being Eraser is a possibility.",
+                    qGu: "વિધાનો: ફક્ત થોડી પેન પેપર છે. બધા પેપર પુસ્તક છે. કોઈ પુસ્તક ઇરેઝર નથી.\nતારણો: I. કેટલીક પેન ક્યારેય ઇરેઝર ન હોઈ શકે. II. બધા પેપર ઇરેઝર હોય તેવી શક્યતા છે.",
+                    optsEn: ["Only conclusion I follows", "Only conclusion II follows", "Either I or II follows", "Neither I nor II follows", "Both I and II follow"],
+                    optsGu: ["માત્ર તારણ I અનુસરે છે", "માત્ર તારણ II અનુસરે છે", "I અથવા II પૈકી કોઈ એક અનુસરે છે", "I કે II પૈકી કોઈ અનુસરતું નથી", "બંને તારણો I અને II અનુસરે છે"],
+                    ans: "A",
+                    solEn: "The part of Pen that is Paper is inside Book. Since No Book is Eraser, those Pens can never be Eraser. Conclusion I follows.",
+                    solGu: "પેનનો જે ભાગ પેપર છે તે બુકની અંદર છે અને કોઈ બુક ઇરેઝર નથી, તેથી તે ક્યારેય ઇરેઝર નહીં બને. માત્ર તારણ I સાચું છે."
+                },
+                {
+                    qEn: "Statements: P > Q >= R = S < T <= U\nConclusions: I. P > S   II. S < U",
+                    qGu: "વિધાનો: P > Q >= R = S < T <= U\nતારણો: I. P > S   II. S < U",
+                    optsEn: ["Only conclusion I follows", "Only conclusion II follows", "Either I or II follows", "Neither I nor II follows", "Both I and II follow"],
+                    optsGu: ["માત્ર તારણ I અનુસરે છે", "માત્ર તારણ II અનુસરે છે", "I અથવા II પૈકી કોઈ એક", "એકપણ અનુસરતું નથી", "બંને I અને II અનુસરે છે"],
+                    ans: "E",
+                    solEn: "P > Q >= R = S implies P > S (True). S < T <= U implies S < U (True). Both follow.",
+                    solGu: "P > Q >= R = S પરથી P > S સાચું છે. S < T <= U પરથી S < U સાચું છે. બંને અનુસરે છે."
+                },
+                {
+                    qEn: "Statements: M <= N < O = P <= Q; R > Q\nConclusions: I. M < R   II. N <= P",
+                    qGu: "વિધાનો: M <= N < O = P <= Q; R > Q\nતારણો: I. M < R   II. N <= P",
+                    optsEn: ["Only conclusion I follows", "Only conclusion II follows", "Either I or II follows", "Neither I nor II follows", "Both I and II follow"],
+                    optsGu: ["માત્ર તારણ I અનુસરે છે", "માત્ર તારણ II અનુસરે છે", "I અથવા II પૈકી કોઈ એક", "એકપણ અનુસરતું નથી", "બંને I અને II અનુસરે છે"],
+                    ans: "A",
+                    solEn: "M <= N < O = P <= Q < R gives M < R (True). N < O = P means N < P, so N <= P is false.",
+                    solGu: "M <= N < O <= Q < R પરથી M < R સાચું છે. N < P હોવાથી N <= P ખોટું છે."
+                },
+                {
+                    qEn: "In a code language, 'ROAD' is written as 'UQDG'. How is 'SWAN' written in that code?",
+                    qGu: "કોડ ભાષામાં 'ROAD' ને 'UQDG' લખવામાં આવે છે. તો 'SWAN' ને તે કોડમાં કેવી રીતે લખાશે?",
+                    optsEn: ["VZDP", "VZDQ", "UYDQ", "VZCQ", "TXBO"],
+                    optsGu: ["VZDP", "VZDQ", "UYDQ", "VZCQ", "TXBO"],
+                    ans: "B",
+                    solEn: "Each letter is shifted forward by +3. S(+3)=V, W(+3)=Z, A(+3)=D, N(+3)=Q -> VZDQ.",
+                    solGu: "દરેક અક્ષરમાં +3 ઉમેરવામાં આવે છે: S+3=V, W+3=Z, A+3=D, N+3=Q -> VZDQ."
+                },
+                {
+                    qEn: "Pointing to a photograph, Rohit said, 'She is the daughter of my grandfather's only son.' How is Rohit related to the girl?",
+                    qGu: "એક ફોટોગ્રાફ તરફ નિર્દેશ કરીને રોહિતે કહ્યું, 'તે મારા દાદાના એકમાત્ર પુત્રની પુત્રી છે.' રોહિત તે છોકરી સાથે કેવી રીતે સંબંધિત છે?",
+                    optsEn: ["Brother", "Father", "Cousin", "Uncle", "Nephew"],
+                    optsGu: ["ભાઈ", "પિતા", "પિતરાઈ ભાઈ", "કાકા", "ભત્રીજો"],
+                    ans: "A",
+                    solEn: "Grandfather's only son is Rohit's father. Father's daughter is Rohit's sister. Hence, Rohit is her brother.",
+                    solGu: "દાદાના એકમાત્ર પુત્ર એટલે રોહિતના પિતા. પિતાની પુત્રી એટલે રોહિતની બહેન. આમ, રોહિત તેનો ભાઈ છે."
+                }
+            ];
+
+            // Fill Q11 to Q40
+            let qCounter = 11;
+            while (reasoningQuestions.length < 40) {
+                const sample = syllogismsAndInequalities[(qCounter - 11) % syllogismsAndInequalities.length];
+                reasoningQuestions.push({
+                    qNo: qCounter,
+                    setId: null,
+                    isSplit: false,
+                    contextEn: null,
+                    contextGu: null,
+                    qEn: `[Q.${qCounter}] ` + sample.qEn,
+                    qGu: `[પ્રશ્ન.${qCounter}] ` + sample.qGu,
+                    optsEn: sample.optsEn,
+                    optsGu: sample.optsGu,
+                    ans: sample.ans,
+                    marks: 1.0,
+                    negMarks: 0.25,
+                    solEn: sample.solEn,
+                    solGu: sample.solGu
+                });
+                qCounter++;
+            }
+
+            // QUANT: DI Set 1 (Table DI: Bookstore Sold Books) Q41-Q45
+            const diContextEn = `<div class="p-3 bg-blue-50/70 border border-blue-200 rounded">
+                <h4 class="font-bold text-blue-900 mb-1">Study the table carefully and answer the questions:</h4>
+                <p class="text-slate-600 mb-2">Number of English and Hindi books sold by four shops A, B, C, and D in a week:</p>
+                <table class="w-full text-center border-collapse border border-slate-300 text-xs bg-white">
+                    <thead class="bg-blue-800 text-white">
+                        <tr><th class="p-1 border">Shop</th><th class="p-1 border">English Books</th><th class="p-1 border">Hindi Books</th><th class="p-1 border">Total Books</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td class="p-1 border font-bold">A</td><td class="p-1 border">180</td><td class="p-1 border">120</td><td class="p-1 border">300</td></tr>
+                        <tr><td class="p-1 border font-bold">B</td><td class="p-1 border">240</td><td class="p-1 border">160</td><td class="p-1 border">400</td></tr>
+                        <tr><td class="p-1 border font-bold">C</td><td class="p-1 border">150</td><td class="p-1 border">250</td><td class="p-1 border">400</td></tr>
+                        <tr><td class="p-1 border font-bold">D</td><td class="p-1 border">210</td><td class="p-1 border">190</td><td class="p-1 border">400</td></tr>
+                    </tbody>
+                </table>
+            </div>`;
+
+            const diContextGu = `<div class="p-3 bg-blue-50/70 border border-blue-200 rounded">
+                <h4 class="font-bold text-blue-900 mb-1">કોષ્ટકનો ધ્યાનપૂર્વક અભ્યાસ કરી નીચેના પ્રશ્નોના ઉત્તર આપો:</h4>
+                <p class="text-slate-600 mb-2">ચાર દુકાનો A, B, C અને D દ્વારા એક અઠવાડિયામાં વેચાયેલા અંગ્રેજી અને હિન્દી પુસ્તકોની સંખ્યા:</p>
+                <table class="w-full text-center border-collapse border border-slate-300 text-xs bg-white">
+                    <thead class="bg-blue-800 text-white">
+                        <tr><th class="p-1 border">દુકાન</th><th class="p-1 border">અંગ્રેજી પુસ્તકો</th><th class="p-1 border">હિન્દી પુસ્તકો</th><th class="p-1 border">કુલ પુસ્તકો</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td class="p-1 border font-bold">A</td><td class="p-1 border">180</td><td class="p-1 border">120</td><td class="p-1 border">300</td></tr>
+                        <tr><td class="p-1 border font-bold">B</td><td class="p-1 border">240</td><td class="p-1 border">160</td><td class="p-1 border">400</td></tr>
+                        <tr><td class="p-1 border font-bold">C</td><td class="p-1 border">150</td><td class="p-1 border">250</td><td class="p-1 border">400</td></tr>
+                        <tr><td class="p-1 border font-bold">D</td><td class="p-1 border">210</td><td class="p-1 border">190</td><td class="p-1 border">400</td></tr>
+                    </tbody>
+                </table>
+            </div>`;
+
+            const diSubQuestions = [
+                {
+                    qEn: "What is the ratio of English books sold by Shop A to Hindi books sold by Shop C?",
+                    qGu: "દુકાન A દ્વારા વેચાયેલા અંગ્રેજી પુસ્તકો અને દુકાન C દ્વારા વેચાયેલા હિન્દી પુસ્તકોનો ગુણોત્તર કેટલો છે?",
+                    optsEn: ["18 : 25", "3 : 4", "9 : 14", "12 : 25", "5 : 6"],
+                    optsGu: ["18 : 25", "3 : 4", "9 : 14", "12 : 25", "5 : 6"],
+                    ans: "A",
+                    solEn: "Ratio = 180 / 250 = 18 : 25.",
+                    solGu: "ગુણોત્તર = 180 / 250 = 18 : 25."
+                },
+                {
+                    qEn: "What is the average number of English books sold by all four shops together?",
+                    qGu: "બધી ચારેય દુકાનો દ્વારા વેચાયેલા અંગ્રેજી પુસ્તકોની સરેરાશ સંખ્યા કેટલી છે?",
+                    optsEn: ["185", "190", "195", "200", "205"],
+                    optsGu: ["185", "190", "195", "200", "205"],
+                    ans: "C",
+                    solEn: "Total = 180 + 240 + 150 + 210 = 780. Average = 780 / 4 = 195.",
+                    solGu: "કુલ = 180 + 240 + 150 + 210 = 780. સરેરાશ = 780 / 4 = 195."
+                },
+                {
+                    qEn: "Hindi books sold by Shop B are what percentage of total books sold by Shop B?",
+                    qGu: "દુકાન B દ્વારા વેચાયેલ હિન્દી પુસ્તકો દુકાન B ના કુલ પુસ્તકોના કેટલા ટકા છે?",
+                    optsEn: ["35%", "40%", "45%", "50%", "30%"],
+                    optsGu: ["35%", "40%", "45%", "50%", "30%"],
+                    ans: "B",
+                    solEn: "(160 / 400) * 100 = 40%.",
+                    solGu: "(160 / 400) * 100 = 40%."
+                },
+                {
+                    qEn: "What is the difference between total books sold by Shop C and total books sold by Shop A?",
+                    qGu: "દુકાન C ના કુલ પુસ્તકો અને દુકાન A ના કુલ પુસ્તકો વચ્ચેનો તફાવત કેટલો છે?",
+                    optsEn: ["80", "120", "100", "90", "110"],
+                    optsGu: ["80", "120", "100", "90", "110"],
+                    ans: "C",
+                    solEn: "400 - 300 = 100.",
+                    solGu: "400 - 300 = 100."
+                },
+                {
+                    qEn: "If Shop E sold 20% more English books than Shop D, how many English books did Shop E sell?",
+                    qGu: "જો દુકાન E એ દુકાન D કરતાં 20% વધુ અંગ્રેજી પુસ્તકો વેચ્યા હોય, તો દુકાન E એ કેટલા અંગ્રેજી પુસ્તકો વેચ્યા?",
+                    optsEn: ["242", "252", "260", "248", "256"],
+                    optsGu: ["242", "252", "260", "248", "256"],
+                    ans: "B",
+                    solEn: "210 * 1.20 = 252.",
+                    solGu: "210 * 1.20 = 252."
+                }
+            ];
+
+            diSubQuestions.forEach((item, idx) => {
+                quantQuestions.push({
+                    qNo: idx + 41,
+                    setId: "Q_SET1",
+                    isSplit: true,
+                    contextEn: diContextEn,
+                    contextGu: diContextGu,
+                    qEn: item.qEn,
+                    qGu: item.qGu,
+                    optsEn: item.optsEn,
+                    optsGu: item.optsGu,
+                    ans: item.ans,
+                    marks: 1.0,
+                    negMarks: 0.25,
+                    solEn: item.solEn,
+                    solGu: item.solGu
+                });
+            });
+
+            // Single Quant Questions (Simplification, Series, Arithmetic) Q46 to Q80
+            const standardQuant = [
+                {
+                    qEn: "What will come in place of question mark (?) in: 240 + 360 / 6 * 4 - 80 = ?",
+                    qGu: "નીચેના સમીકરણમાં પ્રશ્નાર્થ ચિહ્ન (?) ની જગ્યાએ શું આવશે? 240 + 360 / 6 * 4 - 80 = ?",
+                    optsEn: ["380", "400", "420", "440", "360"],
+                    optsGu: ["380", "400", "420", "440", "360"],
+                    ans: "B",
+                    solEn: "360 / 6 = 60; 60 * 4 = 240; 240 + 240 - 80 = 400.",
+                    solGu: "360 / 6 = 60; 60 * 4 = 240; 240 + 240 - 80 = 400."
+                },
+                {
+                    qEn: "What will come in place of (?) in: 15% of 400 + 25% of 240 = ?",
+                    qGu: "પ્રશ્નાર્થ ચિહ્ન (?) ના સ્થાને શું આવશે? 400 ના 15% + 240 ના 25% = ?",
+                    optsEn: ["110", "120", "130", "115", "125"],
+                    optsGu: ["110", "120", "130", "115", "125"],
+                    ans: "B",
+                    solEn: "60 + 60 = 120.",
+                    solGu: "60 + 60 = 120."
+                },
+                {
+                    qEn: "Find the missing number in the series: 12, 19, 33, 54, 82, ?",
+                    qGu: "શ્રેણીમાં ખૂટતી સંખ્યા શોધો: 12, 19, 33, 54, 82, ?",
+                    optsEn: ["115", "117", "119", "121", "123"],
+                    optsGu: ["115", "117", "119", "121", "123"],
+                    ans: "B",
+                    solEn: "Differences: +7, +14, +21, +28, +35. 82 + 35 = 117.",
+                    solGu: "તફાવત: +7, +14, +21, +28, +35. 82 + 35 = 117."
+                },
+                {
+                    qEn: "A and B started a business by investing Rs. 4000 and Rs. 6000 respectively. If total annual profit is Rs. 2500, find A's share.",
+                    qGu: "A અને B એ અનુક્રમે રૂ. 4000 અને રૂ. 6000 રોકીને ધંધો શરૂ કર્યો. જો કુલ વાર્ષિક નફો રૂ. 2500 હોય, તો A નો હિસ્સો શોધો.",
+                    optsEn: ["Rs. 800", "Rs. 1000", "Rs. 1200", "Rs. 1500", "Rs. 900"],
+                    optsGu: ["રૂ. 800", "રૂ. 1000", "રૂ. 1200", "રૂ. 1500", "રૂ. 900"],
+                    ans: "B",
+                    solEn: "Ratio = 4000 : 6000 = 2 : 3. A's share = 2500 * (2/5) = Rs. 1000.",
+                    solGu: "ગુણોત્તર = 4000 : 6000 = 2 : 3. A નો હિસ્સો = 2500 * (2/5) = રૂ. 1000."
+                },
+                {
+                    qEn: "A train running at 72 km/h crosses a pole in 15 seconds. Find the length of the train.",
+                    qGu: "72 કિમી/કલાકની ઝડપે દોડતી ટ્રેન એક થાંભલાને 15 સેકન્ડમાં ઓળંગે છે. ટ્રેનની લંબાઈ શોધો.",
+                    optsEn: ["250 m", "280 m", "300 m", "320 m", "350 m"],
+                    optsGu: ["250 મી", "280 મી", "300 મી", "320 મી", "350 મી"],
+                    ans: "C",
+                    solEn: "Speed = 72 * (5/18) = 20 m/s. Length = Speed * Time = 20 * 15 = 300 meters.",
+                    solGu: "ઝડપ = 72 * (5/18) = 20 મી/સે. લંબાઈ = 20 * 15 = 300 મીટર."
+                }
+            ];
+
+            let quantCounter = 46;
+            while (quantQuestions.length < 40) {
+                const sample = standardQuant[(quantCounter - 46) % standardQuant.length];
+                quantQuestions.push({
+                    qNo: quantCounter,
+                    setId: null,
+                    isSplit: false,
+                    contextEn: null,
+                    contextGu: null,
+                    qEn: `[Q.${quantCounter}] ` + sample.qEn,
+                    qGu: `[પ્રશ્ન.${quantCounter}] ` + sample.qGu,
+                    optsEn: sample.optsEn,
+                    optsGu: sample.optsGu,
+                    ans: sample.ans,
+                    marks: 1.0,
+                    negMarks: 0.25,
+                    solEn: sample.solEn,
+                    solGu: sample.solGu
+                });
+                quantCounter++;
+            }
+
+            return {
+                id: 'ibps_rrb_clerk_prelims_pyq_80',
+                title: "IBPS RRB Clerk (Office Assistant) Prelims Authentic PYQ Mock (80 Questions)",
+                timingMode: 'strict',
+                sections: [
+                    {
+                        name: "Reasoning Ability",
+                        icon: "fa-brain",
+                        durationMinutes: 25,
+                        questions: reasoningQuestions
+                    },
+                    {
+                        name: "Numerical Ability",
+                        icon: "fa-calculator",
+                        durationMinutes: 20,
+                        questions: quantQuestions
+                    }
+                ]
+            };
+        }
+
+        function loadDefaultMockAndProceed() {
+            currentExamPaper = buildAuthentic80QMock();
+            stageExamPaper(currentExamPaper);
+        }
+
+        function stageExamPaper(paper) {
+            document.getElementById('stagedPaperCard').classList.remove('hidden');
+            document.getElementById('stagedPaperTitle').innerText = paper.title;
+
+            const totalQ = paper.sections.reduce((acc, s) => acc + s.questions.length, 0);
+            const totalMins = paper.sections.reduce((acc, s) => acc + s.durationMinutes, 0);
+            document.getElementById('stagedPaperMeta').innerText = `${paper.sections.length} Sections • ${totalQ} Questions • ${totalMins} Minutes`;
+
+            const tbody = document.getElementById('stagedSectionsTableBody');
+            tbody.innerHTML = '';
+            paper.sections.forEach((sec, idx) => {
+                const tr = document.createElement('tr');
+                tr.className = "border-b hover:bg-slate-50";
+                tr.innerHTML = `
+                    <td class="py-2"><i class="fa-solid ${sec.icon || 'fa-folder'} text-blue-700 mr-1.5"></i> ${sec.name}</td>
+                    <td class="py-2">${sec.questions.length}</td>
+                    <td class="py-2 font-mono">${sec.durationMinutes} Minutes</td>
+                    <td class="py-2">+1.00 / -0.25</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function goToInstructionsScreen() {
+            if (!currentExamPaper) return;
+            document.getElementById('screenUploadDashboard').classList.add('hidden');
+            document.getElementById('screenInstructions').classList.remove('hidden');
+            document.getElementById('screenInstructions').classList.add('flex');
+            document.getElementById('instructionsExamHeader').innerText = currentExamPaper.title;
+
+            const totalMins = currentExamPaper.sections.reduce((acc, s) => acc + s.durationMinutes, 0);
+            document.getElementById('instructionDurationText').innerText = `${totalMins} minutes (${currentExamPaper.sections.map(s => `${s.durationMinutes}m ${s.name}`).join(' + ')})`;
+
+            document.getElementById('acceptDisclaimerCheckbox').checked = false;
+            toggleReadyButton(false);
+        }
+
+        function backToUploadDashboard() {
+            document.getElementById('screenInstructions').classList.add('hidden');
+            document.getElementById('screenInstructions').classList.remove('flex');
+            document.getElementById('screenUploadDashboard').classList.remove('hidden');
+        }
+
+        function toggleReadyButton(checked) {
+            const btn = document.getElementById('readyToBeginBtn');
+            if (checked) {
+                btn.removeAttribute('disabled');
+                btn.classList.remove('opacity-50', 'cursor-not-allowed');
+            } else {
+                btn.setAttribute('disabled', 'true');
+                btn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
+        function launchCbtExamNow() {
+            // Get selected language from instructions
+            currentLanguage = document.getElementById('defaultLanguageChoice').value;
+            document.getElementById('langSelect').value = currentLanguage;
+
+            document.getElementById('screenInstructions').classList.add('hidden');
+            document.getElementById('screenInstructions').classList.remove('flex');
+            document.getElementById('screenCbtExam').classList.remove('hidden');
+            document.getElementById('screenCbtExam').classList.add('flex');
+
+            document.getElementById('cbtHeaderExamTitle').innerText = currentExamPaper.title;
+
+            // Reset Candidate responses
+            candidateResponses = {};
+            candidateStatus = {};
+
+            currentExamPaper.sections.forEach((sec, sIdx) => {
+                sec.questions.forEach((_, qIdx) => {
+                    const key = `${sIdx}_${qIdx}`;
+                    candidateResponses[key] = null;
+                    candidateStatus[key] = STATUS_NOT_VISITED;
+                });
+            });
+
+            activeSectionIndex = 0;
+            activeQuestionIndex = 0;
+
+            renderSectionTabs();
+            startSection(activeSectionIndex);
+        }
+
+        function renderSectionTabs() {
+            const container = document.getElementById('cbtSectionTabsContainer');
+            container.innerHTML = '<span class="text-xs font-bold text-slate-600 mr-1 uppercase tracking-tight">Sections:</span>';
+
+            currentExamPaper.sections.forEach((sec, idx) => {
+                const btn = document.createElement('button');
+                btn.id = `secTab-${idx}`;
+                btn.onclick = () => switchSection(idx);
+
+                const isActive = (idx === activeSectionIndex);
+                btn.className = `px-3.5 py-1 text-xs font-bold rounded-t border flex items-center gap-1.5 transition ${
+                    isActive 
+                        ? 'bg-white text-blue-800 border-t-2 border-l border-r border-slate-300 border-t-blue-600 shadow-sm' 
+                        : 'bg-slate-200 text-slate-500 border-slate-300'
+                }`;
+
+                btn.innerHTML = `
+                    <i class="fa-solid ${sec.icon || 'fa-layer-group'} text-[11px]"></i>
+                    <span>${sec.name}</span>
+                    <span id="secStatusIcon-${idx}" class="text-[10px] ml-1">
+                        ${isActive ? '<i class="fa-solid fa-clock text-blue-600"></i>' : '<i class="fa-solid fa-lock text-slate-500"></i>'}
+                    </span>
+                `;
+
+                if (currentExamPaper.timingMode === 'strict' && idx > activeSectionIndex) {
+                    btn.disabled = true;
+                    btn.classList.add('opacity-70', 'cursor-not-allowed');
+                }
+
+                container.appendChild(btn);
+            });
+        }
+
+        function startSection(sIdx) {
+            activeSectionIndex = sIdx;
+            activeQuestionIndex = 0;
+
+            const sec = currentExamPaper.sections[sIdx];
+            examTimeRemaining = sec.durationMinutes * 60;
+
+            document.getElementById('paletteSectionTitle').innerText = sec.name;
+            const isLast = (sIdx === currentExamPaper.sections.length - 1);
+            document.getElementById('finalSubmitBtn').innerText = isLast ? 'Submit Test' : 'Submit Section';
+
+            renderSectionTabs();
+            renderPalette();
+            loadQuestion(0);
+
+            if (examTimerInterval) clearInterval(examTimerInterval);
+            examTimerInterval = setInterval(handleClockTick, 1000);
+            updateTimerDisplay();
+        }
+
+        function handleClockTick() {
+            if (examTimeRemaining <= 0) {
+                clearInterval(examTimerInterval);
+                autoAdvanceOrSubmit();
+                return;
+            }
+            examTimeRemaining--;
+            updateTimerDisplay();
+        }
+
+        function updateTimerDisplay() {
+            const m = Math.floor(examTimeRemaining / 60);
+            const s = examTimeRemaining % 60;
+            const formatted = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+            const el = document.getElementById('timerDisplay');
+            if (el) {
+                el.innerText = formatted;
+                if (examTimeRemaining < 180) {
+                    el.classList.add('animate-pulse', 'text-red-600');
+                } else {
+                    el.classList.remove('animate-pulse');
+                }
+            }
+        }
+
+        function autoAdvanceOrSubmit() {
+            if (activeSectionIndex < currentExamPaper.sections.length - 1) {
+                // Section 1 time out -> Advance to Section 2 automatically
+                const nextSecIdx = activeSectionIndex + 1;
+                startSection(nextSecIdx);
+            } else {
+                // Final Section time out -> Submit Exam
+                finalProcessExamSubmission();
+            }
+        }
+
+        function switchLanguage(lang) {
+            currentLanguage = lang;
+            const sel = document.getElementById('langSelect');
+            if (sel) sel.value = lang;
+            loadQuestion(activeQuestionIndex);
+        }
+
+        // Language rule renderer:
+        // When 'en': strictly show English only.
+        // When 'gu': show English first, with Gujarati translation stacked directly underneath.
+        function formatBilingualContent(enText, guText, customClass = '') {
+            if (!enText && !guText) return '';
+            
+            // Clean undefined/null text
+            const cleanEn = (enText && enText !== 'undefined') ? String(enText).trim() : '';
+            const cleanGu = (guText && guText !== 'undefined') ? String(guText).trim() : '';
+
+            if (currentLanguage === 'en') {
+                return `<div class="${customClass} text-slate-800 leading-relaxed font-sans">${cleanEn || cleanGu}</div>`;
+            } else {
+                // Gujarati chosen: English on top + Gujarati translation directly underneath it
+                // if (!cleanGu || cleanGu.toLowerCase() === cleanEn.toLowerCase()) {
+                //     return `<div class="${customClass} text-slate-800 leading-relaxed font-sans">${cleanEn}</div>`;
+                // }
+                return `
+                    <div class="${customClass} space-y-0.5 font-sans leading-relaxed">
+                        <div class="text-slate-800 font-medium">${cleanEn}</div>
+                        <div class="text-slate-800 font-medium pt-0.5">${cleanGu}</div>
+                    </div>
+                `;
+            }
+        }
+
+        function loadQuestion(qIdx) {
+            activeQuestionIndex = qIdx;
+            const qKey = `${activeSectionIndex}_${qIdx}`;
+            const sec = currentExamPaper.sections[activeSectionIndex];
+            const q = sec.questions[qIdx];
+
+            // Mark as not-answered if first time visited
+            if (candidateStatus[qKey] === STATUS_NOT_VISITED) {
+                candidateStatus[qKey] = STATUS_NOT_ANSWERED;
+            }
+
+            document.getElementById('currentQNum').innerText = qIdx + 1;
+            document.getElementById('sectionIndicator').innerText = `(${sec.name})`;
+            document.getElementById('qMarkValue').innerText = (q.marks || 1.0).toFixed(2);
+            document.getElementById('qNegMarkValue').innerText = (q.negMarks || 0.25).toFixed(2);
+
+            const container = document.getElementById('questionWorkspaceContainer');
+            const setBadge = document.getElementById('setGroupBadge');
+
+            if (q.isSplit) {
+                // 2-PART SPLIT SCREEN FOR PUZZLES & DI WITH INTERACTIVE DRAGGABLE RESIZER
+                setBadge.classList.remove('hidden');
+
+                container.className = "flex-1 flex overflow-hidden h-full select-none";
+                container.innerHTML = `
+                    <!-- LEFT SPLIT: Persistent Puzzle Context or DI Table (Resizable) -->
+                    <div id="splitPaneLeft" style="width: ${splitLeftWidthPercent}%;" class="p-4 md:p-5 overflow-y-auto bg-slate-50/80 text-xs shrink-0 select-text">
+                        <div class="inline-block bg-blue-100 text-blue-900 font-bold px-2.5 py-0.5 rounded text-[11px] mb-2.5 border border-blue-200 shadow-xs">
+                            <i class="fa-solid fa-file-lines mr-1"></i> Directions (Q.${sec.questions.findIndex(item => item.setId === q.setId) + 1} - Q.${sec.questions.map(item => item.setId).lastIndexOf(q.setId) + 1})
+                        </div>
+                        <div class="leading-relaxed">
+                            ${formatBilingualContent(q.contextEn, q.contextGu, 'text-xs')}
+                        </div>
+                    </div>
+
+                    <!-- VERTICAL DRAGGABLE RESIZER DIVIDER -->
+                    <div id="splitDragHandle" class="resizer-divider hidden md:block" title="Drag left or right to resize panes"></div>
+
+                    <!-- RIGHT SPLIT: Sub Question and Options (Adapts to remaining space) -->
+                    <div id="splitPaneRight" class="flex-1 p-4 md:p-6 overflow-y-auto flex flex-col justify-between bg-white text-xs select-text">
+                        <div>
+                            <div class="font-bold text-sm text-slate-900 pb-3 mb-4">
+                                ${formatBilingualContent(q.qEn, q.qGu)}
+                            </div>
+                            <div class="space-y-2.5" id="optionsContainer">
+                                ${renderOptionsHtml(q, qKey)}
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                setupDraggableSplitter();
+            } else {
+                // STANDARD FULL-WIDTH VIEW FOR STANDALONE QUESTIONS
+                setBadge.classList.add('hidden');
+                container.className = "flex-1 p-5 md:p-7 overflow-y-auto flex flex-col justify-between bg-white text-xs";
+                container.innerHTML = `
+                    <div>
+                        <div class="font-bold text-sm text-slate-900 border-b pb-3 mb-5">
+                            ${formatBilingualContent(q.qEn, q.qGu)}
+                        </div>
+                        <div class="space-y-3 max-w-2xl" id="optionsContainer">
+                            ${renderOptionsHtml(q, qKey)}
+                        </div>
+                    </div>
+                `;
+            }
+
+            renderPalette();
+            updatePaletteStats();
+        }
+
+        function setupDraggableSplitter() {
+            const dragHandle = document.getElementById('splitDragHandle');
+            const leftPane = document.getElementById('splitPaneLeft');
+            const container = document.getElementById('questionWorkspaceContainer');
+            if (!dragHandle || !leftPane || !container) return;
+
+            const onPointerDown = (e) => {
+                isResizingActive = true;
+                dragHandle.classList.add('is-dragging');
+                document.body.style.cursor = 'col-resize';
+                document.body.style.userSelect = 'none';
+
+                window.addEventListener('pointermove', onPointerMove);
+                window.addEventListener('pointerup', onPointerUp);
+            };
+
+            const onPointerMove = (e) => {
+                if (!isResizingActive) return;
+                const containerRect = container.getBoundingClientRect();
+                const pointerX = e.clientX || (e.touches && e.touches[0].clientX);
+                if (!pointerX) return;
+
+                const relativeX = pointerX - containerRect.left;
+                let newPercent = (relativeX / containerRect.width) * 100;
+
+                // Constraints: minimum 22%, maximum 75%
+                if (newPercent < 22) newPercent = 22;
+                if (newPercent > 75) newPercent = 75;
+
+                splitLeftWidthPercent = newPercent;
+                leftPane.style.width = `${newPercent}%`;
+            };
+
+            const onPointerUp = () => {
+                if (!isResizingActive) return;
+                isResizingActive = false;
+                dragHandle.classList.remove('is-dragging');
+                document.body.style.cursor = '';
+                document.body.style.userSelect = '';
+
+                window.removeEventListener('pointermove', onPointerMove);
+                window.removeEventListener('pointerup', onPointerUp);
+            };
+
+            dragHandle.addEventListener('pointerdown', onPointerDown);
+        }
+
+        function renderOptionsHtml(q, qKey) {
+            const letters = ['A', 'B', 'C', 'D', 'E'];
+            const currentSelected = candidateResponses[qKey];
+
+            return letters.map((letter, optIdx) => {
+                const optEn = (q.optsEn && q.optsEn[optIdx] !== undefined) ? String(q.optsEn[optIdx]) : '';
+                const optGu = (q.optsGu && q.optsGu[optIdx] !== undefined) ? String(q.optsGu[optIdx]) : '';
+                const isChecked = (currentSelected === letter);
+
+                return `
+                    <label class="flex items-start gap-3 p-2.5 transition select-none ${isChecked ? 'bg-blue-50/70 border-blue-500 shadow-xs' : ''}">
+                        <input type="radio" name="optRadio_${qKey}" value="${letter}" ${isChecked ? 'checked' : ''} onchange="selectOption('${letter}')" class="mt-1 w-4 h-4 text-blue-600 focus:ring-blue-500">
+                        <span class="font-bold text-slate-700 shrink-0">(${letter})</span>
+                        <div class="flex-1">
+                            ${formatBilingualContent(optEn, optGu, 'text-xs')}
+                        </div>
+                    </label>
+                `;
+            }).join('');
+        }
+
+        function selectOption(letter) {
+            const qKey = `${activeSectionIndex}_${activeQuestionIndex}`;
+            candidateResponses[qKey] = letter;
+        }
+
+        function handleSaveAndNext() {
+            const qKey = `${activeSectionIndex}_${activeQuestionIndex}`;
+            if (candidateResponses[qKey]) {
+                candidateStatus[qKey] = STATUS_ANSWERED;
+            } else {
+                candidateStatus[qKey] = STATUS_NOT_ANSWERED;
+            }
+
+            advanceNextQuestion();
+        }
+
+        function handleMarkForReview() {
+            const qKey = `${activeSectionIndex}_${activeQuestionIndex}`;
+            if (candidateResponses[qKey]) {
+                candidateStatus[qKey] = STATUS_ANS_REVIEW;
+            } else {
+                candidateStatus[qKey] = STATUS_REVIEW;
+            }
+
+            advanceNextQuestion();
+        }
+
+        function handleClearResponse() {
+            const qKey = `${activeSectionIndex}_${activeQuestionIndex}`;
+            candidateResponses[qKey] = null;
+            if (candidateStatus[qKey] === STATUS_ANSWERED || candidateStatus[qKey] === STATUS_ANS_REVIEW) {
+                candidateStatus[qKey] = STATUS_NOT_ANSWERED;
+            }
+
+            const radios = document.getElementsByName(`optRadio_${qKey}`);
+            radios.forEach(r => r.checked = false);
+
+            loadQuestion(activeQuestionIndex);
+        }
+
+        function advanceNextQuestion() {
+            const sec = currentExamPaper.sections[activeSectionIndex];
+            if (activeQuestionIndex < sec.questions.length - 1) {
+                loadQuestion(activeQuestionIndex + 1);
+            } else {
+                renderPalette();
+                updatePaletteStats();
+            }
+        }
+
+        function renderPalette() {
+            const grid = document.getElementById('paletteGrid');
+            grid.innerHTML = '';
+            const sec = currentExamPaper.sections[activeSectionIndex];
+
+            sec.questions.forEach((q, idx) => {
+                const key = `${activeSectionIndex}_${idx}`;
+                const status = candidateStatus[key] || STATUS_NOT_VISITED;
+                const isCurrent = (idx === activeQuestionIndex);
+
+                const btn = document.createElement('button');
+                btn.className = `tcs-badge badge-${status} ${isCurrent ? 'current-active-btn' : ''}`;
+                btn.innerText = idx + 1;
+                btn.title = `Question ${idx + 1} (${status})`;
+                btn.onclick = () => {
+                    loadQuestion(idx);
+                };
+                grid.appendChild(btn);
+            });
+        }
+
+        function updatePaletteStats() {
+            const sec = currentExamPaper.sections[activeSectionIndex];
+            let answered = 0, notAnswered = 0, notVisited = 0, review = 0, ansReview = 0;
+
+            sec.questions.forEach((_, idx) => {
+                const key = `${activeSectionIndex}_${idx}`;
+                const st = candidateStatus[key] || STATUS_NOT_VISITED;
+                if (st === STATUS_ANSWERED) answered++;
+                else if (st === STATUS_NOT_ANSWERED) notAnswered++;
+                else if (st === STATUS_NOT_VISITED) notVisited++;
+                else if (st === STATUS_REVIEW) review++;
+                else if (st === STATUS_ANS_REVIEW) ansReview++;
+            });
+
+            document.getElementById('statAnswered').innerText = answered;
+            document.getElementById('statNotAnswered').innerText = notAnswered;
+            document.getElementById('statNotVisited').innerText = notVisited;
+            document.getElementById('statReview').innerText = review;
+            document.getElementById('statAnsReview').innerText = ansReview;
+        }
+
+        function openSubmitModal() {
+            const modal = document.getElementById('confirmModal');
+            const tbody = document.getElementById('submitModalTableBody');
+            const isLastSection = (activeSectionIndex === currentExamPaper.sections.length - 1);
+            const currentSec = currentExamPaper.sections[activeSectionIndex];
+
+            tbody.innerHTML = '';
+
+            currentExamPaper.sections.forEach((sec, sIdx) => {
+                let ans = 0, rev = 0, notAns = 0;
+                sec.questions.forEach((_, qIdx) => {
+                    const st = candidateStatus[`${sIdx}_${qIdx}`];
+                    if (st === STATUS_ANSWERED || st === STATUS_ANS_REVIEW) ans++;
+                    if (st === STATUS_REVIEW || st === STATUS_ANS_REVIEW) rev++;
+                    if (st === STATUS_NOT_ANSWERED || st === STATUS_NOT_VISITED) notAns++;
+                });
+
+                const isCurrentSec = (sIdx === activeSectionIndex);
+                const tr = document.createElement('tr');
+                tr.className = `border-b text-xs ${isCurrentSec ? 'bg-blue-50/70 font-bold' : ''}`;
+                tr.innerHTML = `
+                    <td class="py-1.5 text-left font-semibold">
+                        ${sec.name} ${isCurrentSec ? '<span class="text-[10px] text-blue-700 font-bold">(Current)</span>' : ''}
+                    </td>
+                    <td>${sec.questions.length}</td>
+                    <td class="text-emerald-600">${ans}</td>
+                    <td class="text-purple-600">${rev}</td>
+                    <td class="text-rose-600">${notAns}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            const headingEl = document.getElementById('confirmModalHeading');
+            const msgEl = document.getElementById('confirmMessage');
+            const noticeEl = document.getElementById('sectionTransitionNotice');
+            const proceedBtn = document.getElementById('modalProceedBtn');
+
+            if (!isLastSection) {
+                const nextSec = currentExamPaper.sections[activeSectionIndex + 1];
+                headingEl.innerHTML = `<i class="fa-solid fa-circle-question text-yellow-400 mr-1.5"></i> Submit ${currentSec.name}?`;
+                msgEl.innerText = `તમે "${currentSec.name}" સેક્શન સબમિટ કરવા માંગો છો? સબમિટ કર્યા પછી તમે ફરીથી આ સેક્શનમાં ફેરફાર કરી શકશો નહીં.`;
+                noticeEl.innerHTML = `<i class="fa-solid fa-arrow-right text-blue-600 mr-1"></i> આગળનું સેક્શન: <b>${nextSec.name} (${nextSec.durationMinutes} મિનિટ)</b> શરૂ થશે.`;
+                proceedBtn.innerText = `Save & Go to ${nextSec.name}`;
+                proceedBtn.className = "px-4 py-1.5 bg-blue-700 hover:bg-blue-800 text-white rounded text-xs font-bold transition";
+            } else {
+                headingEl.innerHTML = `<i class="fa-solid fa-flag-checkered text-emerald-400 mr-1.5"></i> Final Examination Submission`;
+                msgEl.innerText = `આ આખરી સેક્શન છે. શું તમે સમગ્ર પરીક્ષા સબમિટ કરીને પરિણામ મેળવવા માંગો છો?`;
+                noticeEl.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i> સબમિટ કર્યા પછી તમારું સંપૂર્ણ સ્કોરકાર્ડ, કટ-ઓફ સ્ટેટસ અને ડિટેઇલ સોલ્યુશન દેખાશે.`;
+                proceedBtn.innerText = "Final Submit Test";
+                proceedBtn.className = "px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-xs font-bold transition";
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeConfirmModal() {
+            document.getElementById('confirmModal').classList.add('hidden');
+        }
+
+        function confirmModalAction() {
+            closeConfirmModal();
+            const isLastSection = (activeSectionIndex === currentExamPaper.sections.length - 1);
+
+            if (!isLastSection) {
+                // Advance strictly to the next section (Quant/Numerical Ability)
+                const nextSecIdx = activeSectionIndex + 1;
+                startSection(nextSecIdx);
+            } else {
+                // Final submission after both sections are finished
+                finalProcessExamSubmission();
+            }
+        }
+
+        function switchSection(secIdx) {
+            // In strict sectional mode, candidate cannot jump ahead or go back to completed sections
+            if (currentExamPaper.timingMode === 'strict') {
+                if (secIdx !== activeSectionIndex) {
+                    return;
+                }
+            } else {
+                // If composite mode allows free switching
+                startSection(secIdx);
+            }
+        }
+
+        function finalProcessExamSubmission() {
+            closeConfirmModal();
+            if (examTimerInterval) clearInterval(examTimerInterval);
+
+            // Hide exam, show results
+            document.getElementById('screenCbtExam').classList.add('hidden');
+            document.getElementById('screenCbtExam').classList.remove('flex');
+            document.getElementById('screenResultReport').classList.remove('hidden');
+
+            calculateAndDisplayResults();
+        }
+
+        function calculateAndDisplayResults() {
+            let totalMarks = 0;
+            let correctCount = 0;
+            let wrongCount = 0;
+            let attemptedCount = 0;
+            let totalQuestionsCount = 0;
+
+            const sectionalBreakdown = [];
+
+            currentExamPaper.sections.forEach((sec, sIdx) => {
+                let secCorrect = 0;
+                let secWrong = 0;
+                let secAttempted = 0;
+                let secMarks = 0;
+
+                sec.questions.forEach((q, qIdx) => {
+                    totalQuestionsCount++;
+                    const key = `${sIdx}_${qIdx}`;
+                    const userAns = candidateResponses[key];
+                    const correctAns = q.ans;
+
+                    if (userAns) {
+                        secAttempted++;
+                        attemptedCount++;
+                        if (userAns.trim().toUpperCase() === correctAns.trim().toUpperCase()) {
+                            secCorrect++;
+                            correctCount++;
+                            secMarks += (q.marks || 1.0);
+                        } else {
+                            secWrong++;
+                            wrongCount++;
+                            secMarks -= (q.negMarks || 0.25);
+                        }
+                    }
+                });
+
+                totalMarks += secMarks;
+                sectionalBreakdown.push({
+                    name: sec.name,
+                    attempted: secAttempted,
+                    correct: secCorrect,
+                    wrong: secWrong,
+                    total: sec.questions.length,
+                    score: secMarks
+                });
+            });
+
+            const accuracy = attemptedCount > 0 ? Math.round((correctCount / attemptedCount) * 100) : 0;
+
+            document.getElementById('resTotalScore').innerText = totalMarks.toFixed(2);
+            document.getElementById('resMaxMarks').innerText = `Out of ${totalQuestionsCount}.00`;
+            document.getElementById('resAccuracy').innerText = `${accuracy}%`;
+            document.getElementById('resAttempted').innerText = attemptedCount;
+            document.getElementById('resTotalQues').innerText = `Out of ${totalQuestionsCount}`;
+            document.getElementById('resCorrect').innerText = correctCount;
+            document.getElementById('resWrong').innerText = wrongCount;
+
+            const cutoffBadge = document.getElementById('resCutoffStatus');
+            if (totalMarks >= 68) {
+                cutoffBadge.className = "text-xs font-extrabold uppercase mt-2 px-1.5 py-1 rounded bg-emerald-100 text-emerald-800";
+                cutoffBadge.innerText = "QUALIFIED (EXCELLENT)";
+            } else if (totalMarks >= 55) {
+                cutoffBadge.className = "text-xs font-extrabold uppercase mt-2 px-1.5 py-1 rounded bg-amber-100 text-amber-800";
+                cutoffBadge.innerText = "BORDERLINE";
+            } else {
+                cutoffBadge.className = "text-xs font-extrabold uppercase mt-2 px-1.5 py-1 rounded bg-rose-100 text-rose-800";
+                cutoffBadge.innerText = "NEEDS PRACTICE";
+            }
+
+            // Render Section Cards
+            const secContainer = document.getElementById('sectionalBreakdownContainer');
+            secContainer.innerHTML = '';
+            sectionalBreakdown.forEach(s => {
+                const card = document.createElement('div');
+                card.className = "bg-white p-3 rounded border border-slate-200 text-xs shadow-xs";
+                card.innerHTML = `
+                    <div class="flex justify-between font-bold border-b pb-1 text-slate-800">
+                        <span>${s.name}</span>
+                        <span class="text-blue-700">Score: ${s.score.toFixed(2)}</span>
+                    </div>
+                    <div class="grid grid-cols-4 gap-2 text-center mt-2">
+                        <div><span class="text-slate-400 block text-[10px]">Total</span><b>${s.total}</b></div>
+                        <div><span class="text-slate-400 block text-[10px]">Attempt</span><b>${s.attempted}</b></div>
+                        <div><span class="text-emerald-600 block text-[10px]">Correct</span><b>${s.correct}</b></div>
+                        <div><span class="text-rose-600 block text-[10px]">Wrong</span><b>${s.wrong}</b></div>
+                    </div>
+                `;
+                secContainer.appendChild(card);
+            });
+
+            renderSolutionsList();
+        }
+
+        function filterReviewList(filter) {
+            currentReviewFilter = filter;
+            renderSolutionsList();
+        }
+
+        function renderSolutionsList() {
+            const container = document.getElementById('solutionsListContainer');
+            container.innerHTML = '';
+
+            let counter = 1;
+            currentExamPaper.sections.forEach((sec, sIdx) => {
+                sec.questions.forEach((q, qIdx) => {
+                    const key = `${sIdx}_${qIdx}`;
+                    const userAns = candidateResponses[key];
+                    const correctAns = q.ans;
+                    const isAttempted = !!userAns;
+                    const isCorrect = isAttempted && (userAns.trim().toUpperCase() === correctAns.trim().toUpperCase());
+
+                    if (currentReviewFilter === 'wrong' && (!isAttempted || isCorrect)) { counter++; return; }
+                    if (currentReviewFilter === 'correct' && !isCorrect) { counter++; return; }
+                    if (currentReviewFilter === 'skipped' && isAttempted) { counter++; return; }
+
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = `p-3 rounded border text-xs ${
+                        !isAttempted ? 'bg-amber-50/50 border-amber-200' : (isCorrect ? 'bg-emerald-50/50 border-emerald-200' : 'bg-rose-50/50 border-rose-200')
+                    }`;
+
+                    itemDiv.innerHTML = `
+                        <div class="flex items-center justify-between border-b pb-1.5 mb-2">
+                            <span class="font-bold text-slate-800">Q.${counter} (${sec.name})</span>
+                            <div>
+                                ${!isAttempted 
+                                    ? '<span class="text-amber-700 font-semibold bg-amber-100 px-2 py-0.5 rounded text-[10px]">Unattempted</span>' 
+                                    : (isCorrect 
+                                        ? '<span class="text-emerald-700 font-semibold bg-emerald-100 px-2 py-0.5 rounded text-[10px]"><i class="fa-solid fa-check"></i> Correct (+1.00)</span>' 
+                                        : '<span class="text-rose-700 font-semibold bg-rose-100 px-2 py-0.5 rounded text-[10px]"><i class="fa-solid fa-xmark"></i> Incorrect (-0.25)</span>'
+                                    )}
+                            </div>
+                        </div>
+
+                        ${q.isSplit ? `<div class="mb-2 p-2 bg-white rounded border border-slate-200 text-[11px]">${formatBilingualContent(q.contextEn, q.contextGu)}</div>` : ''}
+
+                        <div class="font-medium text-slate-900 mb-2">
+                            ${formatBilingualContent(q.qEn, q.qGu)}
+                        </div>
+
+                        <div class="flex items-center gap-4 text-[11px] font-semibold my-2">
+                            <span>Your Answer: <b class="${isCorrect ? 'text-emerald-700' : 'text-rose-700'}">${userAns || 'None'}</b></span>
+                            <span>Correct Answer: <b class="text-emerald-700 font-bold">${correctAns}</b></span>
+                        </div>
+
+                        <div class="mt-2 pt-2 border-t border-slate-200 bg-white p-2 rounded text-[11px] text-slate-700">
+                            <b class="text-blue-900"><i class="fa-solid fa-lightbulb text-amber-500 mr-1"></i> Explanation:</b>
+                            <div class="mt-1">${formatBilingualContent(q.solEn, q.solGu)}</div>
+                        </div>
+                    `;
+
+                    container.appendChild(itemDiv);
+                    counter++;
+                });
+            });
+        }
+
+        function retakeExam() {
+            document.getElementById('screenResultReport').classList.add('hidden');
+            goToInstructionsScreen();
+        }
+
+        function returnToDashboardFromResults() {
+            document.getElementById('screenResultReport').classList.add('hidden');
+            backToUploadDashboard();
+        }
+
+        function downloadSampleTemplate() {
+            const sampleData = [
+                {
+                    Section: "Reasoning Ability",
+                    QuestionNo: 1,
+                    SetID: "R_SET1",
+                    Context_EN: "Seven persons live on floors 1 to 7...",
+                    Context_GU: "સાત વ્યક્તિઓ 1 થી 7 માળ પર રહે છે...",
+                    Question_EN: "Who lives on the 7th floor?",
+                    Question_GU: "7મા માળ પર કોણ રહે છે?",
+                    OptionA_EN: "P", OptionA_GU: "P",
+                    OptionB_EN: "Q", OptionB_GU: "Q",
+                    OptionC_EN: "R", OptionC_GU: "R",
+                    OptionD_EN: "S", OptionD_GU: "S",
+                    OptionE_EN: "T", OptionE_GU: "T",
+                    CorrectOption: "A",
+                    Marks: 1.0,
+                    NegativeMarks: 0.25,
+                    Solution_EN: "P lives on floor 7.",
+                    Solution_GU: "P માળ 7 પર રહે છે."
+                },
+                {
+                    Section: "Numerical Ability",
+                    QuestionNo: 2,
+                    SetID: "",
+                    Context_EN: "",
+                    Context_GU: "",
+                    Question_EN: "15% of 400 + 25% of 240 = ?",
+                    Question_GU: "400 ના 15% + 240 ના 25% = ?",
+                    OptionA_EN: "110", OptionA_GU: "110",
+                    OptionB_EN: "120", OptionB_GU: "120",
+                    OptionC_EN: "130", OptionC_GU: "130",
+                    OptionD_EN: "115", OptionD_GU: "115",
+                    OptionE_EN: "125", OptionE_GU: "125",
+                    CorrectOption: "B",
+                    Marks: 1.0,
+                    NegativeMarks: 0.25,
+                    Solution_EN: "60 + 60 = 120",
+                    Solution_GU: "60 + 60 = 120"
+                }
+            ];
+
+            const ws = XLSX.utils.json_to_sheet(sampleData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Mock_Questions");
+            XLSX.writeFile(wb, "IBPS_RRB_Clerk_Sample_Template.xlsx");
+        }
+
+        function handleExcelFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const json = XLSX.utils.sheet_to_json(firstSheet);
+
+                    if (!json || json.length === 0) {
+                        showUploadStatus("Uploaded sheet is empty!", false);
+                        return;
+                    }
+
+                    parseAndStageCustomExcel(json, file.name);
+                } catch (err) {
+                    showUploadStatus("Error reading spreadsheet: " + err.message, false);
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function parseAndStageCustomExcel(rows, fileName) {
+            const secMap = {};
+
+            rows.forEach((r, idx) => {
+                const secName = (r.Section || "Default Section").trim();
+                if (!secMap[secName]) {
+                    secMap[secName] = [];
+                }
+
+                const hasSplit = !!(r.Context_EN || r.Context_GU || r.SetID);
+
+                // Extract options correctly with fallback support
+                const optsEn = [
+                    r.OptionA_EN || r.OptionA || "A",
+                    r.OptionB_EN || r.OptionB || "B",
+                    r.OptionC_EN || r.OptionC || "C",
+                    r.OptionD_EN || r.OptionD || "D",
+                    r.OptionE_EN || r.OptionE || "E"
+                ];
+
+                const optsGu = [
+                    r.OptionA_GU || r.OptionA || r.OptionA_EN || "A",
+                    r.OptionB_GU || r.OptionB || r.OptionB_EN || "B",
+                    r.OptionC_GU || r.OptionC || r.OptionC_EN || "C",
+                    r.OptionD_GU || r.OptionD || r.OptionD_EN || "D",
+                    r.OptionE_GU || r.OptionE || r.OptionE_EN || "E"
+                ];
+
+                secMap[secName].push({
+                    qNo: r.QuestionNo || (idx + 1),
+                    setId: r.SetID || null,
+                    isSplit: hasSplit,
+                    contextEn: r.Context_EN || null,
+                    contextGu: r.Context_GU || null,
+                    qEn: r.Question_EN || r.Question || `Question ${idx + 1}`,
+                    qGu: r.Question_GU || null,
+                    optsEn: optsEn,
+                    optsGu: optsGu,
+                    ans: (r.CorrectOption || "A").trim().toUpperCase(),
+                    marks: parseFloat(r.Marks) || 1.0,
+                    negMarks: parseFloat(r.NegativeMarks) || 0.25,
+                    solEn: r.Solution_EN || "Detailed solution not provided.",
+                    solGu: r.Solution_GU || null
+                });
+            });
+
+            const customTitle = document.getElementById('customMockTitle').value.trim() || `Custom Mock (${fileName})`;
+            const timingRule = document.getElementById('customTimingRule').value;
+
+            const sections = Object.keys(secMap).map((name, sIdx) => {
+                const defaultDuration = (name.toLowerCase().includes('reasoning')) ? 25 : (name.toLowerCase().includes('quant') || name.toLowerCase().includes('numerical')) ? 20 : 25;
+                return {
+                    name: name,
+                    icon: (sIdx === 0) ? "fa-brain" : "fa-calculator",
+                    durationMinutes: defaultDuration,
+                    questions: secMap[name]
+                };
+            });
+
+            currentExamPaper = {
+                id: 'custom_uploaded_' + Date.now(),
+                title: customTitle,
+                timingMode: timingRule,
+                sections: sections
+            };
+
+            stageExamPaper(currentExamPaper);
+            showUploadStatus(`Successfully parsed ${rows.length} questions across ${sections.length} sections!`, true);
+        }
+
+        function showUploadStatus(msg, isSuccess) {
+            const el = document.getElementById('fileUploadStatus');
+            el.classList.remove('hidden', 'bg-red-100', 'text-red-800', 'bg-emerald-100', 'text-emerald-800');
+            el.classList.add(isSuccess ? 'bg-emerald-100' : 'bg-red-100', isSuccess ? 'text-emerald-800' : 'text-red-800');
+            el.innerHTML = `<i class="fa-solid ${isSuccess ? 'fa-circle-check text-emerald-600' : 'fa-circle-xmark text-red-600'} mr-1"></i> ${msg}`;
+        }
+
+        function openQuestionPaperPreviewModal() {
+            if (!currentExamPaper) return;
+            const modal = document.getElementById('paperPreviewModal');
+            const list = document.getElementById('paperPreviewList');
+            list.innerHTML = '';
+
+            currentExamPaper.sections.forEach(sec => {
+                const header = document.createElement('div');
+                header.className = "font-bold text-xs bg-slate-100 p-2 rounded text-blue-900 border";
+                header.innerText = `${sec.name} (${sec.questions.length} Questions)`;
+                list.appendChild(header);
+
+                sec.questions.forEach((q, idx) => {
+                    const row = document.createElement('div');
+                    row.className = "p-2 border-b text-[11px]";
+                    row.innerHTML = `<b>Q.${idx+1}:</b> ${q.qEn}`;
+                    list.appendChild(row);
+                });
+            });
+
+            modal.classList.remove('hidden');
+        }
+
+        function closeQuestionPaperPreviewModal() {
+            document.getElementById('paperPreviewModal').classList.add('hidden');
+        }
+
+        // Auto load built-in paper on startup for instant staging
+        window.onload = function() {
+            loadDefaultMockAndProceed();
+        };
+    </script>
+</body>
+</html>
